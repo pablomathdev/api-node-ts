@@ -5,5 +5,8 @@ module.exports = {
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
   collectCoverageFrom: [
-    '<rootDir>/src/**/*.ts']
+    '<rootDir>/src/**/*.ts'],
+  transform: {
+    '.+\\.ts$': 'ts-jest'
+  }
 }

@@ -3,7 +3,8 @@ import { badRequest } from '../../../helpers/http-responses'
 import { HttpRequest } from '../../../helpers/http-protocols'
 import { Validation } from '../../interfaces/validation'
 import { RegisterController } from './register-controller'
-import { UserRepository } from '../../../domain/interfaces/user-repository'
+import { UserRepository } from '../../../domain/interfaces/repositories/user-repository'
+import { Authentication } from '../../../domain/interfaces/authetication/authentication'
 
 const makeValidation = (): Validation => {
   class ValidationCompositeStub implements Validation {
@@ -13,6 +14,16 @@ const makeValidation = (): Validation => {
   }
   return new ValidationCompositeStub()
 }
+
+const makeAuthentication = (): Authentication => {
+  class AuthenticationStub implements Authentication {
+    auth (email: string, password: string): any {
+      return null
+    }
+  }
+  return new AuthenticationStub()
+}
+
 const makeUserRepository = (): UserRepository => {
   class UserRepositoryStub implements UserRepository {
     async create (): Promise<boolean> {
@@ -25,13 +36,15 @@ interface SutTypes {
   sut: RegisterController
   validationStub: Validation
   userRepositoryStub: UserRepository
+  authenticationStub: Authentication
 }
 
 const makeSut = (): SutTypes => {
+  const authenticationStub = makeAuthentication()
   const validationStub = makeValidation()
   const userRepositoryStub = makeUserRepository()
-  const sut = new RegisterController(validationStub, userRepositoryStub)
-  return { sut, validationStub, userRepositoryStub }
+  const sut = new RegisterController(validationStub, userRepositoryStub, authenticationStub)
+  return { sut, validationStub, userRepositoryStub, authenticationStub }
 }
 
 describe('Register Controller', () => {
@@ -92,5 +105,19 @@ describe('Register Controller', () => {
 
     const httRes = await sut.handle(httpReq)
     expect(httRes).toEqual({ statusCode: 500, body: new Error('Error') })
+  })
+  test('should calls authentication with correct values', async () => {
+    const { sut, authenticationStub } = makeSut()
+    const authSpy = jest.spyOn(authenticationStub, 'auth')
+    const httpReq: HttpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      }
+    }
+
+    await sut.handle(httpReq)
+    expect(authSpy).toHaveBeenCalledWith('any_email', 'any_password')
   })
 })

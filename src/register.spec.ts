@@ -1,3 +1,5 @@
+import { MissingParamError } from './helpers/errors'
+import { badRequest } from './helpers/http-responses'
 import { HttpRequest } from './http-protocols'
 import { Validation } from './interfaces/validation'
 import { RegisterController } from './register-controller'
@@ -41,7 +43,7 @@ describe('Register Controller', () => {
   test('should return 400 if validation returns a error', async () => {
     const { sut, validationStub } = makeSut()
     jest.spyOn(validationStub, 'validate')
-      .mockReturnValueOnce(new Error())
+      .mockReturnValueOnce(new MissingParamError('any_field'))
     const httpReq: HttpRequest = {
       body: {
 
@@ -51,9 +53,6 @@ describe('Register Controller', () => {
     }
 
     const httpRes = await sut.handle(httpReq)
-    expect(httpRes).toEqual({
-      statusCode: 400,
-      body: new Error()
-    })
+    expect(httpRes).toEqual(badRequest(new MissingParamError('any_field')))
   })
 })

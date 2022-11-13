@@ -1,4 +1,4 @@
 
 export interface Authentication {
-  auth(email: string, password: string): Promise<any>
+  auth(email: string, password: string): Promise<string>
 }

@@ -22,7 +22,13 @@ export class RegisterController implements Controller {
       const isCreateAccount = await this.userRepository.create(httpRequest.body)
       if (isCreateAccount) {
         const { email, password } = httpRequest.body
-        await this.authentication.auth(email, password)
+        const token = await this.authentication.auth(email, password)
+        if (token) {
+          return {
+            statusCode: 200,
+            accessToken: token
+          }
+        }
       }
     } catch (error) {
       return {

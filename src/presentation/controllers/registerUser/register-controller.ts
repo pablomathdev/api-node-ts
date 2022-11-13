@@ -2,10 +2,12 @@ import { badRequest } from '../../../helpers/http-responses'
 import { HttpRequest, HttpResponse } from '../../../helpers/http-protocols'
 import { Controller } from '../../interfaces/controller'
 import { Validation } from '../../interfaces/validation'
+import { UserRepository } from '../../../domain/interfaces/user-repository'
 
 export class RegisterController implements Controller {
   constructor (
-    private readonly validation: Validation) {}
+    private readonly validation: Validation,
+    private readonly userRepository: UserRepository) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
@@ -13,8 +15,9 @@ export class RegisterController implements Controller {
       if (validationError) {
         return badRequest(validationError)
       }
+      await this.userRepository.create(httpRequest.body)
     } catch (error) {
-      return null
+      return new Promise(resolve => resolve(null))
     }
   }
 }

@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --silent --noStackTrace --passWithNoTests",
-    "test:unit": "npm test -- --watch --coverage=false ",
+    "test": "jest --silent --noStackTrace --passWithNoTests --runInBand",
+    "test:unit": "npm test -- --watch --coverage=false",
     "test:staged": "npm test -- --findRelatedTests"
   },
   "keywords": [],
@@ -24,6 +24,7 @@
     "jest": "^29.3.1",
     "lint-staged": "^13.0.3",
     "ts-jest": "^29.0.3",
+    "ts-node": "^10.9.1",
     "typescript": "^4.8.4"
   }
 }

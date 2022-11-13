@@ -1,4 +1,4 @@
-import { HttpResponse } from '../http-protocols'
+import { HttpResponse } from '../helpers/http-protocols'
 import { MissingParamError } from './errors'
 
 export const badRequest = (paramName: any): HttpResponse => {

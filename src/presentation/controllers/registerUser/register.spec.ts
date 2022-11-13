@@ -3,12 +3,7 @@ import { badRequest } from '../../../helpers/http-responses'
 import { HttpRequest } from '../../../helpers/http-protocols'
 import { Validation } from '../../interfaces/validation'
 import { RegisterController } from './register-controller'
-
-type SutTypes = {
-  sut: RegisterController
-  validationStub: Validation
-
-}
+import { UserRepository } from '../../../domain/interfaces/user-repository'
 
 const makeValidation = (): Validation => {
   class ValidationCompositeStub implements Validation {
@@ -18,11 +13,25 @@ const makeValidation = (): Validation => {
   }
   return new ValidationCompositeStub()
 }
+const makeUserRepository = (): UserRepository => {
+  class UserRepositoryStub implements UserRepository {
+    async create (): Promise<boolean> {
+      return new Promise(resolve => resolve(true))
+    }
+  }
+  return new UserRepositoryStub()
+}
+interface SutTypes {
+  sut: RegisterController
+  validationStub: Validation
+  userRepositoryStub: UserRepository
+}
 
 const makeSut = (): SutTypes => {
   const validationStub = makeValidation()
-  const sut = new RegisterController(validationStub)
-  return { sut, validationStub }
+  const userRepositoryStub = makeUserRepository()
+  const sut = new RegisterController(validationStub, userRepositoryStub)
+  return { sut, validationStub, userRepositoryStub }
 }
 
 describe('Register Controller', () => {
@@ -38,7 +47,7 @@ describe('Register Controller', () => {
     }
 
     await sut.handle(httpReq)
-    expect(validateSpy).toBeCalledWith(httpReq.body)
+    expect(validateSpy).toHaveBeenCalledWith(httpReq.body)
   })
   test('should return 400 if validation returns a error', async () => {
     const { sut, validationStub } = makeSut()
@@ -54,5 +63,19 @@ describe('Register Controller', () => {
 
     const httpRes = await sut.handle(httpReq)
     expect(httpRes).toEqual(badRequest(new MissingParamError('name')))
+  })
+  test('should call userRepository with correct values', async () => {
+    const { sut, userRepositoryStub } = makeSut()
+    const createSpy = jest.spyOn(userRepositoryStub, 'create')
+    const httpReq: HttpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      }
+    }
+
+    await sut.handle(httpReq)
+    expect(createSpy).toBeCalledWith(httpReq.body)
   })
 })

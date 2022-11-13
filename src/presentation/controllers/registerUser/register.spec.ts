@@ -78,4 +78,19 @@ describe('Register Controller', () => {
     await sut.handle(httpReq)
     expect(createSpy).toBeCalledWith(httpReq.body)
   })
+  test('should throw if userRepository throws', async () => {
+    const { sut, userRepositoryStub } = makeSut()
+    jest.spyOn(userRepositoryStub, 'create')
+      .mockImplementationOnce(async () => { return await new Promise((resolve, reject) => reject(new Error())) })
+    const httpReq: HttpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      }
+    }
+
+    const httRes = await sut.handle(httpReq)
+    expect(httRes).toEqual({ statusCode: 500, body: new Error('Error') })
+  })
 })

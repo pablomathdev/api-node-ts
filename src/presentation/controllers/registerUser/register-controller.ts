@@ -15,9 +15,13 @@ export class RegisterController implements Controller {
       if (validationError) {
         return badRequest(validationError)
       }
+
       await this.userRepository.create(httpRequest.body)
     } catch (error) {
-      return new Promise(resolve => resolve(null))
+      return {
+        statusCode: 500,
+        body: new Error(error)
+      }
     }
   }
 }

@@ -1,4 +1,4 @@
 
 export interface Validation {
-  validate(input: string): Boolean
+  validate(input: string): any
 }

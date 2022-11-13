@@ -7,7 +7,13 @@ export class RegisterController implements Controller {
     private readonly validation: Validation) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    this.validation.validate(httpRequest.body)
-    return await new Promise(resolve => resolve(null))
+    const validationError = this.validation.validate(httpRequest.body)
+    if (validationError) {
+      return {
+        statusCode: 400,
+        body: new Error()
+      }
+    }
+    return null
   }
 }

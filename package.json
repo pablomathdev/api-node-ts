@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "test:unit": "npm test -- --watch --passWithNoTests",
+    "test": "jest --silent --noStackTrace --passWithNoTests",
+    "test:unit": "npm test -- --watch --coverage=false ",
     "test:staged": "npm test -- --findRelatedTests"
   },
   "keywords": [],

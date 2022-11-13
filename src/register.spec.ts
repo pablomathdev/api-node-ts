@@ -10,7 +10,7 @@ type SutTypes = {
 
 const makeValidation = (): Validation => {
   class ValidationCompositeStub implements Validation {
-    validate (input: string): Boolean {
+    validate (input: string): any {
       return true
     }
   }
@@ -29,6 +29,7 @@ describe('Register Controller', () => {
     const validateSpy = jest.spyOn(validationStub, 'validate')
     const httpReq: HttpRequest = {
       body: {
+        name: 'any_name',
         email: 'any_email',
         password: 'any_password'
       }
@@ -36,5 +37,23 @@ describe('Register Controller', () => {
 
     await sut.handle(httpReq)
     expect(validateSpy).toBeCalledWith(httpReq.body)
+  })
+  test('should return 400 if validation returns a error', async () => {
+    const { sut, validationStub } = makeSut()
+    jest.spyOn(validationStub, 'validate')
+      .mockReturnValueOnce(new Error())
+    const httpReq: HttpRequest = {
+      body: {
+
+        email: 'any_email',
+        password: 'any_password'
+      }
+    }
+
+    const httpRes = await sut.handle(httpReq)
+    expect(httpRes).toEqual({
+      statusCode: 400,
+      body: new Error()
+    })
   })
 })

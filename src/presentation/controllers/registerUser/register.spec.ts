@@ -134,4 +134,19 @@ describe('Register Controller', () => {
     const httpRes = await sut.handle(httpReq)
     expect(httpRes).toEqual({ statusCode: 200, accessToken: 'any_token' })
   })
+  test('should throw if authentication throws', async () => {
+    const { sut, authenticationStub } = makeSut()
+    jest.spyOn(authenticationStub, 'auth')
+      .mockImplementationOnce(async () => { return new Promise((resolve, reject) => reject(new Error())) })
+    const httpReq: HttpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      }
+    }
+
+    const httpRes = await sut.handle(httpReq)
+    await expect(httpRes).toEqual({ statusCode: 500, body: new Error('Error') })
+  })
 })

@@ -17,8 +17,8 @@ const makeValidation = (): Validation => {
 
 const makeAuthentication = (): Authentication => {
   class AuthenticationStub implements Authentication {
-    auth (email: string, password: string): any {
-      return null
+    async auth (email: string, password: string): Promise<string> {
+      return new Promise(resolve => resolve('any_token'))
     }
   }
   return new AuthenticationStub()
@@ -119,5 +119,19 @@ describe('Register Controller', () => {
 
     await sut.handle(httpReq)
     expect(authSpy).toHaveBeenCalledWith('any_email', 'any_password')
+  })
+  test('should return access Token if user is authenticated', async () => {
+    const { sut, authenticationStub } = makeSut()
+    jest.spyOn(authenticationStub, 'auth')
+    const httpReq: HttpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      }
+    }
+
+    const httpRes = await sut.handle(httpReq)
+    expect(httpRes).toEqual({ statusCode: 200, accessToken: 'any_token' })
   })
 })

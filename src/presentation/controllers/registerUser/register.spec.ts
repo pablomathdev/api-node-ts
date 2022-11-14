@@ -1,5 +1,5 @@
 import { MissingParamError } from '../../helpers/errors'
-import { badRequest, badRequestUserAlreadyExists } from '../../helpers/http-responses'
+import { badRequest, badRequestUserAlreadyExists, serverError } from '../../helpers/http-responses'
 import { HttpRequest } from '../../helpers/http-protocols'
 import { Validation } from '../../interfaces/validation'
 import { RegisterController } from './register-controller'
@@ -112,6 +112,21 @@ describe('Register Controller', () => {
 
     const httpRes = await sut.handle(httpReq)
     expect(httpRes).toEqual(badRequestUserAlreadyExists())
+  })
+  test('should throw if repository throws', async () => {
+    const { sut, repositoryStub } = makeSut()
+    jest.spyOn(repositoryStub, 'execute')
+      .mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    const httpReq: HttpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      }
+    }
+
+    const httpRes = await sut.handle(httpReq)
+    expect(httpRes).toEqual(serverError(new Error()))
   })
 
   // test('should calls authentication with correct values', async () => {

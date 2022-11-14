@@ -2,7 +2,8 @@ import { Validation } from '../presentation/interfaces/validation'
 
 export class ValidationComposite implements Validation {
   constructor (
-    private readonly requiredFields: Validation
+    private readonly requiredFields: Validation,
+    private readonly emailValidation: Validation
   ) {
 
   }
@@ -12,5 +13,6 @@ export class ValidationComposite implements Validation {
     if (missingParam) {
       return missingParam
     }
+    this.emailValidation.validate(input.email)
   }
 }

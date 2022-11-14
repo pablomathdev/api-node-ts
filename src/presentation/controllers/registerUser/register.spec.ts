@@ -1,5 +1,5 @@
 import { MissingParamError } from '../../helpers/errors'
-import { badRequest } from '../../helpers/http-responses'
+import { badRequest, badRequestUserAlreadyExists } from '../../helpers/http-responses'
 import { HttpRequest } from '../../helpers/http-protocols'
 import { Validation } from '../../interfaces/validation'
 import { RegisterController } from './register-controller'
@@ -111,10 +111,7 @@ describe('Register Controller', () => {
     }
 
     const httpRes = await sut.handle(httpReq)
-    expect(httpRes).toEqual({
-      statusCode: 400,
-      body: new Error()
-    })
+    expect(httpRes).toEqual(badRequestUserAlreadyExists())
   })
 
   // test('should calls authentication with correct values', async () => {

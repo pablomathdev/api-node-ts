@@ -2,10 +2,12 @@ import { MissingParamError } from '../presentation/helpers/errors'
 import { Validation } from '../presentation/interfaces/validation'
 
 class RequiredFieldsValidation implements Validation {
-  validate (input: any): any {
-    const requiredFields = ['name', 'email', 'password']
+  constructor (private readonly requiredFields: string[]) {
 
-    for (const field of requiredFields) {
+  }
+
+  validate (input: any): any {
+    for (const field of this.requiredFields) {
       if (!input[field]) {
         return new MissingParamError(field)
       }
@@ -15,7 +17,8 @@ class RequiredFieldsValidation implements Validation {
 
 describe('Required Fields Validation', () => {
   test('should return error if name no is provided', () => {
-    const sut = new RequiredFieldsValidation()
+    const requiredFields = ['name', 'email', 'password']
+    const sut = new RequiredFieldsValidation(requiredFields)
 
     const httpReq = {
       body: {
@@ -27,7 +30,8 @@ describe('Required Fields Validation', () => {
     expect(result).toEqual(new MissingParamError('name'))
   })
   test('should return error if email no is provided', () => {
-    const sut = new RequiredFieldsValidation()
+    const requiredFields = ['name', 'email', 'password']
+    const sut = new RequiredFieldsValidation(requiredFields)
 
     const httpReq = {
       body: {
@@ -39,7 +43,8 @@ describe('Required Fields Validation', () => {
     expect(result).toEqual(new MissingParamError('email'))
   })
   test('should return error if password no is provided', () => {
-    const sut = new RequiredFieldsValidation()
+    const requiredFields = ['name', 'email', 'password']
+    const sut = new RequiredFieldsValidation(requiredFields)
 
     const httpReq = {
       body: {

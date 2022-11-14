@@ -20,7 +20,13 @@ export class RegisterController implements Controller {
         return badRequest(validationError)
       }
 
-      await this.repository.execute(httpRequest.body)
+      const isCreateAccount = await this.repository.execute(httpRequest.body)
+      if (!isCreateAccount) {
+        return {
+          statusCode: 400,
+          body: new Error()
+        }
+      }
       // if (isCreateAccount) {
       //   const token = await this.authentication.auth(email, password)
       //   if (token) {

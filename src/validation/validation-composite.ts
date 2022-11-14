@@ -1,3 +1,4 @@
+
 import { Validation } from '../presentation/interfaces/validation'
 
 export class ValidationComposite implements Validation {
@@ -13,6 +14,9 @@ export class ValidationComposite implements Validation {
     if (missingParam) {
       return missingParam
     }
-    this.emailValidation.validate(input.email)
+    const isValidEmail = this.emailValidation.validate(input.email)
+    if (isValidEmail) {
+      return isValidEmail
+    }
   }
 }

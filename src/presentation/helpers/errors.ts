@@ -13,3 +13,10 @@ export class ServerError extends Error {
     this.stack = stackError
   }
 }
+
+export class InvalidEmail extends Error {
+  constructor () {
+    super('Invalid Email')
+    this.name = 'Invalid Email'
+  }
+}

@@ -27,14 +27,8 @@ const makeAuthentication = (): Authentication => {
 
 const makeAddUserRepository = (): UserRepository => {
   class UserRepositoryStub implements UserRepository {
-    async execute (body: User): Promise<User | Error> {
-      const user = {
-        id: 'any_id',
-        name: 'any_name',
-        email: 'any_email'
-      }
-
-      return new Promise(resolve => resolve(user))
+    async execute (body: User): Promise<any> {
+      return new Promise(resolve => resolve(true))
     }
   }
   return new UserRepositoryStub()

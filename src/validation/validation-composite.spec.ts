@@ -90,4 +90,21 @@ describe('Validation Composite', () => {
     const error = sut.validate(httpReq.body)
     expect(error).toEqual(new InvalidEmail())
   })
+  test('should return the first error if it has more than one validation error', () => {
+    const { sut, emailValidationStub, requiredFieldsStub } = makeSut()
+
+    jest.spyOn(requiredFieldsStub, 'validate')
+      .mockReturnValueOnce(new MissingParamError('any_field'))
+    jest.spyOn(emailValidationStub, 'validate')
+      .mockReturnValueOnce(new InvalidEmail())
+    const httpReq: HttpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      }
+    }
+    const error = sut.validate(httpReq.body)
+    expect(error).toEqual(new MissingParamError('any_field'))
+  })
 })

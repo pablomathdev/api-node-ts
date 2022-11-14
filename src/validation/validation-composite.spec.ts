@@ -1,3 +1,4 @@
+import { MissingParamError } from '../presentation/helpers/errors'
 import { HttpRequest } from '../presentation/helpers/http-protocols'
 import { Validation } from '../presentation/interfaces/validation'
 import { ValidationComposite } from './validation-composite'
@@ -36,5 +37,20 @@ describe('Validation Composite', () => {
     }
     sut.validate(fields.body)
     expect(validateSpy).toHaveBeenCalledWith(fields.body)
+  })
+  test('should return missingParamError if validationRequiredFields returns this error ', () => {
+    const { sut, requiredFieldsStub } = makeSut()
+    jest.spyOn(requiredFieldsStub, 'validate')
+      .mockImplementationOnce(() => { return new MissingParamError('any_field') })
+
+    const fields: HttpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      }
+    }
+    const error = sut.validate(fields.body)
+    expect(error).toEqual(new MissingParamError('any_field'))
   })
 })

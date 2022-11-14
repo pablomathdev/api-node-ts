@@ -1,4 +1,4 @@
-import { badRequest } from '../../../helpers/http-responses'
+import { badRequest, serverError } from '../../../helpers/http-responses'
 import { HttpRequest, HttpResponse } from '../../../helpers/http-protocols'
 import { Controller } from '../../interfaces/controller'
 import { Validation } from '../../interfaces/validation'
@@ -31,10 +31,7 @@ export class RegisterController implements Controller {
         }
       }
     } catch (error) {
-      return {
-        statusCode: 500,
-        body: new Error(error)
-      }
+      return serverError(error)
     }
   }
 }

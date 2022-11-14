@@ -1,5 +1,5 @@
 import { MissingParamError } from '../../../helpers/errors'
-import { badRequest } from '../../../helpers/http-responses'
+import { badRequest, serverError } from '../../../helpers/http-responses'
 import { HttpRequest } from '../../../helpers/http-protocols'
 import { Validation } from '../../interfaces/validation'
 import { RegisterController } from './register-controller'
@@ -104,7 +104,7 @@ describe('Register Controller', () => {
     }
 
     const httRes = await sut.handle(httpReq)
-    expect(httRes).toEqual({ statusCode: 500, body: new Error('Error') })
+    expect(httRes).toEqual(serverError(new Error()))
   })
   test('should calls authentication with correct values', async () => {
     const { sut, authenticationStub } = makeSut()
@@ -147,6 +147,6 @@ describe('Register Controller', () => {
     }
 
     const httpRes = await sut.handle(httpReq)
-    await expect(httpRes).toEqual({ statusCode: 500, body: new Error('Error') })
+    await expect(httpRes).toEqual(serverError(new Error()))
   })
 })

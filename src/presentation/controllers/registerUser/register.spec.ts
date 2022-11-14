@@ -8,7 +8,7 @@ import { Authentication } from '../../../domain/interfaces/authetication/authent
 
 const makeValidation = (): Validation => {
   class ValidationCompositeStub implements Validation {
-    validate (input: string): any {
+    validate (input: object): any {
       return null
     }
   }

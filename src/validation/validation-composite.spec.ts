@@ -29,7 +29,7 @@ type SutTypes = {
 const makeSut = (): SutTypes => {
   const emailValidationStub = makeEmailValidation()
   const requiredFieldsStub = makeRequiredFields()
-  const sut = new ValidationComposite(requiredFieldsStub, emailValidationStub)
+  const sut = new ValidationComposite([requiredFieldsStub, emailValidationStub])
   return { sut, requiredFieldsStub, emailValidationStub }
 }
 
@@ -74,20 +74,20 @@ describe('Validation Composite', () => {
       }
     }
     sut.validate(httpReq.body)
-    expect(validateSpy).toHaveBeenCalledWith(httpReq.body.email)
+    expect(validateSpy).toHaveBeenCalledWith(httpReq.body)
   })
   test('should return InvalidEmail if emailValidation returns this error ', () => {
     const { sut, emailValidationStub } = makeSut()
     jest.spyOn(emailValidationStub, 'validate')
       .mockImplementationOnce(() => { return new InvalidEmail() })
-    const fields: HttpRequest = {
+    const httpReq: HttpRequest = {
       body: {
         name: 'any_name',
         email: 'invalid_email',
         password: 'any_password'
       }
     }
-    const error = sut.validate(fields.body.email)
+    const error = sut.validate(httpReq.body)
     expect(error).toEqual(new InvalidEmail())
   })
 })

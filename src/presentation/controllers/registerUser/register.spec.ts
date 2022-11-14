@@ -1,5 +1,5 @@
 import { MissingParamError } from '../../helpers/errors'
-import { badRequest, badRequestUserAlreadyExists, serverError } from '../../helpers/http-responses'
+import { badRequest, badRequestUserAlreadyExists, serverError, created } from '../../helpers/http-responses'
 import { HttpRequest } from '../../helpers/http-protocols'
 import { Validation } from '../../interfaces/validation'
 import { RegisterController } from './register-controller'
@@ -129,61 +129,61 @@ describe('Register Controller', () => {
     expect(httpRes).toEqual(serverError(new Error()))
   })
 
-  // test('should calls authentication with correct values', async () => {
-  //   const { sut, authenticationStub } = makeSut()
-  //   const authSpy = jest.spyOn(authenticationStub, 'auth')
-  //   const httpReq: HttpRequest = {
-  //     body: {
-  //       name: 'any_name',
-  //       email: 'any_email',
-  //       password: 'any_password'
-  //     }
-  //   }
+  test('should calls authentication with correct values', async () => {
+    const { sut, authenticationStub } = makeSut()
+    const authSpy = jest.spyOn(authenticationStub, 'auth')
+    const httpReq: HttpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      }
+    }
 
-  //   await sut.handle(httpReq)
-  //   expect(authSpy).toHaveBeenCalledWith('any_email', 'any_password')
-  // })
-  // test('should return access Token if user is authenticated', async () => {
-  //   const { sut } = makeSut()
-  //   const httpReq: HttpRequest = {
-  //     body: {
-  //       name: 'any_name',
-  //       email: 'any_email',
-  //       password: 'any_password'
-  //     }
-  //   }
+    await sut.handle(httpReq)
+    expect(authSpy).toHaveBeenCalledWith('any_email', 'any_password')
+  })
+  test('should return access Token if user is authenticated', async () => {
+    const { sut } = makeSut()
+    const httpReq: HttpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      }
+    }
 
-  //   const httpRes = await sut.handle(httpReq)
-  //   expect(httpRes).toEqual(created('any_token'))
-  // })
-  // test('should throw if authentication throws', async () => {
-  //   const { sut, authenticationStub } = makeSut()
-  //   jest.spyOn(authenticationStub, 'auth')
-  //     .mockImplementationOnce(async () => { return new Promise((resolve, reject) => reject(new Error())) })
-  //   const httpReq: HttpRequest = {
-  //     body: {
-  //       name: 'any_name',
-  //       email: 'any_email',
-  //       password: 'any_password'
-  //     }
-  //   }
+    const httpRes = await sut.handle(httpReq)
+    expect(httpRes).toEqual(created('any_token'))
+  })
+  test('should throw if authentication throws', async () => {
+    const { sut, authenticationStub } = makeSut()
+    jest.spyOn(authenticationStub, 'auth')
+      .mockImplementationOnce(async () => { return new Promise((resolve, reject) => reject(new Error())) })
+    const httpReq: HttpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      }
+    }
 
-  //   const httpRes = await sut.handle(httpReq)
-  //   await expect(httpRes).toEqual(serverError(new Error()))
-  // })
-  // test('should throw if authentication throws', async () => {
-  //   const { sut, authenticationStub } = makeSut()
-  //   jest.spyOn(authenticationStub, 'auth')
-  //     .mockImplementationOnce(async () => { return new Promise((resolve, reject) => reject(new Error())) })
-  //   const httpReq: HttpRequest = {
-  //     body: {
-  //       name: 'any_name',
-  //       email: 'any_email',
-  //       password: 'any_password'
-  //     }
-  //   }
+    const httpRes = await sut.handle(httpReq)
+    await expect(httpRes).toEqual(serverError(new Error()))
+  })
+  test('should throw if authentication throws', async () => {
+    const { sut, authenticationStub } = makeSut()
+    jest.spyOn(authenticationStub, 'auth')
+      .mockImplementationOnce(async () => { return new Promise((resolve, reject) => reject(new Error())) })
+    const httpReq: HttpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      }
+    }
 
-  //   const httpRes = await sut.handle(httpReq)
-  //   await expect(httpRes).toEqual(serverError(new Error()))
-  // })
+    const httpRes = await sut.handle(httpReq)
+    await expect(httpRes).toEqual(serverError(new Error()))
+  })
 })

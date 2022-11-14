@@ -1,8 +1,7 @@
-import { MissingParamError } from '../presentation/helpers/errors'
+import { MissingParamError, InvalidEmail } from '../presentation/helpers/errors'
 import { HttpRequest } from '../presentation/helpers/http-protocols'
 import { Validation } from '../presentation/interfaces/validation'
 import { ValidationComposite } from './validation-composite'
-
 const makeRequiredFields = (): Validation => {
   class RequiredFieldsValidationStub implements Validation {
     validate (input: any): any {
@@ -76,5 +75,19 @@ describe('Validation Composite', () => {
     }
     sut.validate(httpReq.body)
     expect(validateSpy).toHaveBeenCalledWith(httpReq.body.email)
+  })
+  test('should return InvalidEmail if emailValidation returns this error ', () => {
+    const { sut, emailValidationStub } = makeSut()
+    jest.spyOn(emailValidationStub, 'validate')
+      .mockImplementationOnce(() => { return new InvalidEmail() })
+    const fields: HttpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'invalid_email',
+        password: 'any_password'
+      }
+    }
+    const error = sut.validate(fields.body.email)
+    expect(error).toEqual(new InvalidEmail())
   })
 })

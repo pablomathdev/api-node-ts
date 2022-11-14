@@ -1,4 +1,4 @@
-import { badRequest, serverError } from '../../helpers/http-responses'
+import { badRequest, badRequestUserAlreadyExists, serverError } from '../../helpers/http-responses'
 import { HttpRequest, HttpResponse } from '../../helpers/http-protocols'
 import { Controller } from '../../interfaces/controller'
 import { Validation } from '../../interfaces/validation'
@@ -22,10 +22,7 @@ export class RegisterController implements Controller {
 
       const isCreateAccount = await this.repository.execute(httpRequest.body)
       if (!isCreateAccount) {
-        return {
-          statusCode: 400,
-          body: new Error()
-        }
+        return badRequestUserAlreadyExists()
       }
       // if (isCreateAccount) {
       //   const token = await this.authentication.auth(email, password)

@@ -1,10 +1,16 @@
 import { HttpResponse } from './http-protocols'
-import { MissingParamError, ServerError } from './errors'
+import { MissingParamError, ServerError, EmailAlreadyExistsError } from './errors'
 
 export const badRequest = (paramName: any): HttpResponse => {
   return {
     statusCode: 400,
     body: new MissingParamError(paramName)
+  }
+}
+export const badRequestUserAlreadyExists = (): HttpResponse => {
+  return {
+    statusCode: 400,
+    body: new EmailAlreadyExistsError()
   }
 }
 

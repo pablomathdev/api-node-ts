@@ -20,3 +20,9 @@ export class InvalidEmail extends Error {
     this.name = 'Invalid Email'
   }
 }
+export class EmailAlreadyExistsError extends Error {
+  constructor () {
+    super('Email Already Exists')
+    this.name = 'EmailAlreadyExistsError'
+  }
+}

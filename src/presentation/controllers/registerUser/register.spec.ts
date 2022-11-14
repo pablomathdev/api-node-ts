@@ -27,8 +27,14 @@ const makeAuthentication = (): Authentication => {
 
 const makeAddUserRepository = (): UserRepository => {
   class UserRepositoryStub implements UserRepository {
-    async execute (body: User): Promise<any> {
-      throw new Error('Method not implemented.')
+    async execute (body: User): Promise<User | Error> {
+      const user = {
+        id: 'any_id',
+        name: 'any_name',
+        email: 'any_email'
+      }
+
+      return new Promise(resolve => resolve(user))
     }
   }
   return new UserRepositoryStub()
@@ -91,6 +97,24 @@ describe('Register Controller', () => {
 
     await sut.handle(httpReq)
     expect(repositorySpy).toHaveBeenCalledWith(httpReq.body)
+  })
+  test('should return 400 if repository returns a error', async () => {
+    const { sut, repositoryStub } = makeSut()
+    jest.spyOn(repositoryStub, 'execute')
+      .mockReturnValueOnce(new Promise(resolve => resolve(false)))
+    const httpReq: HttpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      }
+    }
+
+    const httpRes = await sut.handle(httpReq)
+    expect(httpRes).toEqual({
+      statusCode: 400,
+      body: new Error()
+    })
   })
 
   // test('should calls authentication with correct values', async () => {

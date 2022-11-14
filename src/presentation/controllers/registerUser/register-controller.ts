@@ -1,5 +1,5 @@
-import { badRequest, created, serverError } from '../../../helpers/http-responses'
-import { HttpRequest, HttpResponse } from '../../../helpers/http-protocols'
+import { badRequest, created, serverError } from '../../helpers/http-responses'
+import { HttpRequest, HttpResponse } from '../../helpers/http-protocols'
 import { Controller } from '../../interfaces/controller'
 import { Validation } from '../../interfaces/validation'
 import { UserRepository } from '../../../domain/interfaces/repositories/user-repository'

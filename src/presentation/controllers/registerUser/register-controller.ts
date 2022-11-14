@@ -1,4 +1,4 @@
-import { badRequest, serverError } from '../../../helpers/http-responses'
+import { badRequest, created, serverError } from '../../../helpers/http-responses'
 import { HttpRequest, HttpResponse } from '../../../helpers/http-protocols'
 import { Controller } from '../../interfaces/controller'
 import { Validation } from '../../interfaces/validation'
@@ -24,10 +24,7 @@ export class RegisterController implements Controller {
         const { email, password } = httpRequest.body
         const token = await this.authentication.auth(email, password)
         if (token) {
-          return {
-            statusCode: 200,
-            accessToken: token
-          }
+          return created(token)
         }
       }
     } catch (error) {

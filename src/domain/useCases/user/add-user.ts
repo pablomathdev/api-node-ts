@@ -1,6 +1,6 @@
 import { User } from '../../entitys/user'
 
-export interface UserRepository {
+export interface AddUser {
   create(user: User): Promise<boolean>
 
 }

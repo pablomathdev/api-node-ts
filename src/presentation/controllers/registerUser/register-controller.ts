@@ -2,13 +2,13 @@ import { badRequest, created, serverError } from '../../helpers/http-responses'
 import { HttpRequest, HttpResponse } from '../../helpers/http-protocols'
 import { Controller } from '../../interfaces/controller'
 import { Validation } from '../../interfaces/validation'
-import { UserRepository } from '../../../domain/interfaces/repositories/user-repository'
-import { Authentication } from '../../../domain/interfaces/authetication/authentication'
+import { AddUser } from '../../../domain/useCases/user/add-user'
+import { Authentication } from '../../../domain/useCases/user/authentication'
 
 export class RegisterController implements Controller {
   constructor (
     private readonly validation: Validation,
-    private readonly userRepository: UserRepository,
+    private readonly addUserRepository: AddUser,
     private readonly authentication: Authentication
   ) {}
 
@@ -19,7 +19,7 @@ export class RegisterController implements Controller {
         return badRequest(validationError)
       }
 
-      const isCreateAccount = await this.userRepository.create(httpRequest.body)
+      const isCreateAccount = await this.addUserRepository.create(httpRequest.body)
       if (isCreateAccount) {
         const { email, password } = httpRequest.body
         const token = await this.authentication.auth(email, password)

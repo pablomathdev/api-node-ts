@@ -3,8 +3,8 @@ import { badRequest, created, serverError } from '../../helpers/http-responses'
 import { HttpRequest } from '../../helpers/http-protocols'
 import { Validation } from '../../interfaces/validation'
 import { RegisterController } from './register-controller'
-import { UserRepository } from '../../../domain/interfaces/repositories/user-repository'
-import { Authentication } from '../../../domain/interfaces/authetication/authentication'
+import { AddUser } from '../../../domain/useCases/user/add-user'
+import { Authentication } from '../../../domain/useCases/user/authentication'
 
 const makeValidation = (): Validation => {
   class ValidationCompositeStub implements Validation {
@@ -24,27 +24,27 @@ const makeAuthentication = (): Authentication => {
   return new AuthenticationStub()
 }
 
-const makeUserRepository = (): UserRepository => {
-  class UserRepositoryStub implements UserRepository {
+const makeAddUserRepository = (): AddUser => {
+  class AddUserRepositoryStub implements AddUser {
     async create (): Promise<boolean> {
       return new Promise(resolve => resolve(true))
     }
   }
-  return new UserRepositoryStub()
+  return new AddUserRepositoryStub()
 }
 interface SutTypes {
   sut: RegisterController
   validationStub: Validation
-  userRepositoryStub: UserRepository
+  addUserRepositoryStub: AddUser
   authenticationStub: Authentication
 }
 
 const makeSut = (): SutTypes => {
   const authenticationStub = makeAuthentication()
   const validationStub = makeValidation()
-  const userRepositoryStub = makeUserRepository()
-  const sut = new RegisterController(validationStub, userRepositoryStub, authenticationStub)
-  return { sut, validationStub, userRepositoryStub, authenticationStub }
+  const addUserRepositoryStub = makeAddUserRepository()
+  const sut = new RegisterController(validationStub, addUserRepositoryStub, authenticationStub)
+  return { sut, validationStub, addUserRepositoryStub, authenticationStub }
 }
 
 describe('Register Controller', () => {
@@ -78,8 +78,8 @@ describe('Register Controller', () => {
     expect(httpRes).toEqual(badRequest(new MissingParamError('name')))
   })
   test('should call userRepository with correct values', async () => {
-    const { sut, userRepositoryStub } = makeSut()
-    const createSpy = jest.spyOn(userRepositoryStub, 'create')
+    const { sut, addUserRepositoryStub } = makeSut()
+    const createSpy = jest.spyOn(addUserRepositoryStub, 'create')
     const httpReq: HttpRequest = {
       body: {
         name: 'any_name',
@@ -92,8 +92,8 @@ describe('Register Controller', () => {
     expect(createSpy).toBeCalledWith(httpReq.body)
   })
   test('should throw if userRepository throws', async () => {
-    const { sut, userRepositoryStub } = makeSut()
-    jest.spyOn(userRepositoryStub, 'create')
+    const { sut, addUserRepositoryStub } = makeSut()
+    jest.spyOn(addUserRepositoryStub, 'create')
       .mockImplementationOnce(async () => { return await new Promise((resolve, reject) => reject(new Error())) })
     const httpReq: HttpRequest = {
       body: {

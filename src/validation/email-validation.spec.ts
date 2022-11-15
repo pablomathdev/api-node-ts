@@ -12,13 +12,13 @@ class EmailValidation implements Validation {
 }
 
 interface EmailValidator {
-  isValid(email: string): boolean
+  isValid(email: string): Error
 }
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub {
-    isValid (email: string): boolean {
-      return true
+    isValid (email: string): Error {
+      return null
     }
   }
   return new EmailValidatorStub()
@@ -47,7 +47,7 @@ describe('Email Validation', () => {
   test('should return error if email to invalid', () => {
     const { sut, emailValidatorStub } = makeSut()
     jest.spyOn(emailValidatorStub, 'isValid')
-      .mockReturnValueOnce(false)
+      .mockReturnValueOnce(null)
     const email = { email: 'invalid_email' }
 
     const result = sut.validate(email)

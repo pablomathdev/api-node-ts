@@ -1,24 +1,14 @@
 import { MissingParamError } from '../presentation/helpers/errors'
-import { Validation } from '../presentation/interfaces/validation'
+import { RequiredFieldsValidation } from './required-fields-validation'
 
-class RequiredFieldsValidation implements Validation {
-  constructor (private readonly requiredFields: string[]) {
-
-  }
-
-  validate (input: any): any {
-    for (const field of this.requiredFields) {
-      if (!input[field]) {
-        return new MissingParamError(field)
-      }
-    }
-  }
+const makeSut = (): RequiredFieldsValidation => {
+  const requiredFields = ['name', 'email', 'password']
+  return new RequiredFieldsValidation(requiredFields)
 }
 
 describe('Required Fields Validation', () => {
   test('should return error if name no is provided', () => {
-    const requiredFields = ['name', 'email', 'password']
-    const sut = new RequiredFieldsValidation(requiredFields)
+    const sut = makeSut()
 
     const httpReq = {
       body: {
@@ -43,9 +33,7 @@ describe('Required Fields Validation', () => {
     expect(result).toEqual(new MissingParamError('email'))
   })
   test('should return error if password no is provided', () => {
-    const requiredFields = ['name', 'email', 'password']
-    const sut = new RequiredFieldsValidation(requiredFields)
-
+    const sut = makeSut()
     const httpReq = {
       body: {
         name: 'any_name',

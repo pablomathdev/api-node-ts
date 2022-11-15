@@ -28,4 +28,11 @@ describe('Email Validator', () => {
     const result = sut.isValid('any_email')
     expect(result).toBe(true)
   })
+  test('should return false if email to invalid', () => {
+    const sut = makeSut()
+    jest.spyOn(emailValidationLib, 'validate')
+      .mockReturnValueOnce(false)
+    const result = sut.isValid('any_email')
+    expect(result).toBe(false)
+  })
 })

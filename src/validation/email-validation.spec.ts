@@ -1,23 +1,10 @@
 import { InvalidEmail } from '../presentation/helpers/errors'
 import { Validation } from '../presentation/interfaces/validation'
-
-class EmailValidation implements Validation {
-  constructor (private readonly emailvalidator: EmailValidator) {}
-  validate (input: any): any {
-    const email = input.email
-    if (!this.emailvalidator.isValid(email)) {
-      return new InvalidEmail()
-    }
-  }
-}
-
-interface EmailValidator {
-  isValid(email: string): Error
-}
+import { EmailValidation, EmailValidator } from './email-validation'
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub {
-    isValid (email: string): Error {
+    isValid (email: string): Boolean {
       return null
     }
   }
@@ -45,9 +32,8 @@ describe('Email Validation', () => {
     expect(isvalidSpy).toHaveBeenCalledWith('any_email')
   })
   test('should return error if email to invalid', () => {
-    const { sut, emailValidatorStub } = makeSut()
-    jest.spyOn(emailValidatorStub, 'isValid')
-      .mockReturnValueOnce(null)
+    const { sut } = makeSut()
+
     const email = { email: 'invalid_email' }
 
     const result = sut.validate(email)

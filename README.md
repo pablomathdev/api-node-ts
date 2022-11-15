@@ -3,8 +3,8 @@
  
 
 #### Business logic
-[] - Validate if fields are provided
-[] - If no fields is provided, return bad request (error 400)
+[x] - Validate if fields are provided
+[x] - If no fields is provided, return bad request (error 400)
 [] - Validate Email
 [] - If Invalid Email is provided,return bad request (error 400)
 [] - if user already exists no add user

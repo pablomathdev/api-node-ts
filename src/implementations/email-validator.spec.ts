@@ -1,13 +1,8 @@
 import { EmailValidator } from '../validation/email-validation'
 import * as emailValidationLib from 'email-validator'
+import { EmailValidatorImplementation } from './email-validator-implemantation'
 
 jest.mock('email-validator')
-
-class EmailValidatorImplementation implements EmailValidator {
-  isValid (email: string): Boolean {
-    return emailValidationLib.validate(email)
-  }
-}
 
 const makeSut = (): EmailValidator => {
   const sut = new EmailValidatorImplementation()

@@ -5,7 +5,7 @@ import { Validation } from '../../interfaces/validation'
 import { RegisterController } from './register-controller'
 import { Authentication } from '../../../domain/useCases/user/authentication'
 import { User } from '../../../domain/entitys/user'
-import { UserRepository } from '../../../data/user-repository'
+import { AddUser } from '../../../domain/useCases/user/add-user'
 
 const makeValidation = (): Validation => {
   class ValidationCompositeStub implements Validation {
@@ -25,18 +25,18 @@ const makeAuthentication = (): Authentication => {
   return new AuthenticationStub()
 }
 
-const makeAddUserRepository = (): UserRepository => {
-  class UserRepositoryStub implements UserRepository {
-    async execute (body: User): Promise<any> {
+const makeAddUserRepository = (): AddUser => {
+  class RepositoryStub implements AddUser {
+    async create (user: User): Promise<boolean> {
       return new Promise(resolve => resolve(true))
     }
   }
-  return new UserRepositoryStub()
+  return new RepositoryStub()
 }
 interface SutTypes {
   sut: RegisterController
   validationStub: Validation
-  repositoryStub: UserRepository
+  repositoryStub: AddUser
   authenticationStub: Authentication
 }
 
@@ -80,7 +80,7 @@ describe('Register Controller', () => {
   })
   test('should call repository with correct values', async () => {
     const { sut, repositoryStub } = makeSut()
-    const repositorySpy = jest.spyOn(repositoryStub, 'execute')
+    const repositorySpy = jest.spyOn(repositoryStub, 'create')
     const httpReq: HttpRequest = {
       body: {
         name: 'any_name',
@@ -94,7 +94,7 @@ describe('Register Controller', () => {
   })
   test('should return 400 if repository returns a error', async () => {
     const { sut, repositoryStub } = makeSut()
-    jest.spyOn(repositoryStub, 'execute')
+    jest.spyOn(repositoryStub, 'create')
       .mockReturnValueOnce(new Promise(resolve => resolve(false)))
     const httpReq: HttpRequest = {
       body: {
@@ -109,7 +109,7 @@ describe('Register Controller', () => {
   })
   test('should throw if repository throws', async () => {
     const { sut, repositoryStub } = makeSut()
-    jest.spyOn(repositoryStub, 'execute')
+    jest.spyOn(repositoryStub, 'create')
       .mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
     const httpReq: HttpRequest = {
       body: {

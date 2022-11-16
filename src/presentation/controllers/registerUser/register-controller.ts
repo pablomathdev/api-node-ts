@@ -4,12 +4,13 @@ import { Controller } from '../../interfaces/controller'
 import { Validation } from '../../interfaces/validation'
 
 import { Authentication } from '../../../domain/useCases/user/authentication'
-import { UserRepository } from '../../../data/user-repository'
+
+import { AddUser } from '../../../domain/useCases/user/add-user'
 
 export class RegisterController implements Controller {
   constructor (
     private readonly validation: Validation,
-    private readonly repository: UserRepository,
+    private readonly addUser: AddUser,
     private readonly authentication: Authentication
   ) {}
 
@@ -20,7 +21,7 @@ export class RegisterController implements Controller {
         return badRequest(validationError)
       }
 
-      const isCreateAccount = await this.repository.execute(httpRequest.body)
+      const isCreateAccount = await this.addUser.create(httpRequest.body)
       if (!isCreateAccount) {
         return badRequestUserAlreadyExists()
       }

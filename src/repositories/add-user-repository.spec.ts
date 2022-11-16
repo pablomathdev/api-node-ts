@@ -3,23 +3,6 @@ import { Hasher } from '../domain/useCases/security/Hasher'
 import { AddUser, IdUser } from '../domain/useCases/user/add-user'
 import { FindUserByEmail } from '../domain/useCases/user/find-user-by-email'
 
-class FindUserByEmailRepositoryStub implements FindUserByEmail {
-  async findByEmail (email: string): Promise<any> {
-    return new Promise(resolve => resolve(null))
-  }
-}
-class HashPasswordStub implements Hasher {
-  async hash (password: string): Promise<string> {
-    return new Promise(resolve => resolve('hashed_password'))
-  }
-}
-
-class DatabaseStub implements Database {
-  async add (input: any): Promise<void> {
-    return null
-  }
-}
-
 interface Database {
   add(input: any): Promise<void>
 }
@@ -41,14 +24,30 @@ class AddUserRepository implements AddUser {
   }
 }
 const makeHashPassword = (): Hasher => {
+  class HashPasswordStub implements Hasher {
+    async hash (password: string): Promise<string> {
+      return new Promise(resolve => resolve('hashed_password'))
+    }
+  }
   return new HashPasswordStub()
 }
 
 const makeFindUserByEmailRepository = (): FindUserByEmail => {
+  class FindUserByEmailRepositoryStub implements FindUserByEmail {
+    async findByEmail (email: string): Promise<any> {
+      return new Promise(resolve => resolve(null))
+    }
+  }
+
   return new FindUserByEmailRepositoryStub()
 }
 
 const makeDatabase = (): Database => {
+  class DatabaseStub implements Database {
+    async add (input: any): Promise<void> {
+      return null
+    }
+  }
   return new DatabaseStub()
 }
 

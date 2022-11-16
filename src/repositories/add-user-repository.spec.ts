@@ -153,4 +153,20 @@ describe('Add User Repository', () => {
       password: 'hashed_password'
     })
   })
+  test('should throw if database throws', async () => {
+    const { sut, databaseStub } = makeSut()
+    jest.spyOn(databaseStub, 'add')
+      .mockImplementationOnce(async () => {
+        return new Promise((resolve, reject) => {
+          reject(new Error())
+        })
+      })
+    const user: User = {
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    const result = sut.create(user)
+    await expect(result).rejects.toThrow()
+  })
 })

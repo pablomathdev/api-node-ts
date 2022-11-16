@@ -9,21 +9,35 @@ class FindUserByEmailRepositoryStub implements FindUserByEmail {
   }
 }
 class HashPasswordStub implements Hasher {
-  hash (password: string): string {
-    return 'hashed_password'
+  async hash (password: string): Promise<string> {
+    return new Promise(resolve => resolve('hashed_password'))
   }
+}
+
+class DatabaseStub implements Database {
+  async add (input: any): Promise<void> {
+    return null
+  }
+}
+
+interface Database {
+  add(input: any): Promise<void>
 }
 
 class AddUserRepository implements AddUser {
   constructor (private readonly findUserByEmail: FindUserByEmail,
-    private readonly hashPassword: Hasher) {}
+    private readonly hashPassword: Hasher,
+    private readonly database: Database) {}
 
   async create (user: User): Promise<boolean> {
     const userAccount = await this.findUserByEmail.findByEmail(user.email)
     if (userAccount) {
       return false
     }
-    this.hashPassword.hash(user.password)
+    const hashedPassword = await this.hashPassword.hash(user.password)
+    const accountToDb = Object.assign({}, user, { password: hashedPassword })
+
+    await this.database.add(accountToDb)
   }
 }
 const makeHashPassword = (): Hasher => {
@@ -34,17 +48,23 @@ const makeFindUserByEmailRepository = (): FindUserByEmail => {
   return new FindUserByEmailRepositoryStub()
 }
 
+const makeDatabase = (): Database => {
+  return new DatabaseStub()
+}
+
 interface SutTypes {
   sut: AddUser
   findUserByEmailRepositoryStub: FindUserByEmail
   hashPasswordStub: Hasher
+  databaseStub: Database
 }
 
 const makeSut = (): SutTypes => {
+  const databaseStub = makeDatabase()
   const hashPasswordStub = makeHashPassword()
   const findUserByEmailRepositoryStub = makeFindUserByEmailRepository()
-  const sut = new AddUserRepository(findUserByEmailRepositoryStub, hashPasswordStub)
-  return { sut, findUserByEmailRepositoryStub, hashPasswordStub }
+  const sut = new AddUserRepository(findUserByEmailRepositoryStub, hashPasswordStub, databaseStub)
+  return { sut, findUserByEmailRepositoryStub, hashPasswordStub, databaseStub }
 }
 
 describe('Add User Repository', () => {
@@ -64,7 +84,8 @@ describe('Add User Repository', () => {
     jest.spyOn(findUserByEmailRepositoryStub, 'findByEmail')
       .mockReturnValueOnce(new Promise(resolve => resolve({
         name: 'any_name',
-        email: 'any_email'
+        email: 'any_email',
+        id: 'any_id'
       })))
     const user: User = {
       name: 'any_name',
@@ -73,6 +94,22 @@ describe('Add User Repository', () => {
     }
     const result = await sut.create(user)
     expect(result).toBe(false)
+  })
+  test('should throw if findUserByEmail throws', async () => {
+    const { sut, findUserByEmailRepositoryStub } = makeSut()
+    jest.spyOn(findUserByEmailRepositoryStub, 'findByEmail')
+      .mockImplementationOnce(async () => {
+        return new Promise((resolve, reject) => {
+          reject(new Error())
+        })
+      })
+    const user: User = {
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    const result = sut.create(user)
+    await expect(result).rejects.toThrow()
   })
   test('should calls hashPassword with correct password', async () => {
     const { sut, hashPasswordStub } = makeSut()
@@ -84,5 +121,36 @@ describe('Add User Repository', () => {
     }
     await sut.create(user)
     expect(hashSpy).toHaveBeenCalledWith(user.password)
+  })
+  test('should throw if findUserByEmail throws', async () => {
+    const { sut, findUserByEmailRepositoryStub } = makeSut()
+    jest.spyOn(findUserByEmailRepositoryStub, 'findByEmail')
+      .mockImplementationOnce(async () => {
+        return new Promise((resolve, reject) => {
+          reject(new Error())
+        })
+      })
+    const user: User = {
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    const result = sut.create(user)
+    await expect(result).rejects.toThrow()
+  })
+  test('should calls database with correct values', async () => {
+    const { sut, databaseStub } = makeSut()
+    const addSpy = jest.spyOn(databaseStub, 'add')
+    const user: User = {
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    await sut.create(user)
+    expect(addSpy).toHaveBeenCalledWith({
+      name: 'any_name',
+      email: 'any_email',
+      password: 'hashed_password'
+    })
   })
 })

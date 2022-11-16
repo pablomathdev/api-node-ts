@@ -16,8 +16,10 @@ class AddUserRepository implements AddUser {
   constructor (private readonly findUserByEmail: FindUserByEmail) {}
 
   async create (user: User): Promise<boolean> {
-    await this.findUserByEmail.findByEmail(user.email)
-    return null
+    const userAccount = await this.findUserByEmail.findByEmail(user.email)
+    if (userAccount) {
+      return false
+    }
   }
 }
 
@@ -47,5 +49,27 @@ describe('Add User Repository', () => {
     }
     await sut.create(user)
     expect(findByEmailSpy).toHaveBeenCalledWith('any_email')
+  })
+  test('should returns false if findUserByEmail returns a user', async () => {
+    const { sut } = makeSut()
+
+    const user: User = {
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    const result = await sut.create(user)
+    expect(result).toBe(false)
+  })
+  test('should returns false if findUserByEmail returns a user', async () => {
+    const { sut } = makeSut()
+
+    const user: User = {
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    const result = await sut.create(user)
+    expect(result).toBe(false)
   })
 })

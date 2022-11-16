@@ -10,7 +10,7 @@ import { AddUser } from '../../../domain/useCases/user/add-user'
 export class RegisterController implements Controller {
   constructor (
     private readonly validation: Validation,
-    private readonly addUser: AddUser,
+    private readonly addUserRepository: AddUser,
     private readonly authentication: Authentication
   ) {}
 
@@ -21,17 +21,16 @@ export class RegisterController implements Controller {
         return badRequest(validationError)
       }
 
-      const isCreateAccount = await this.addUser.create(httpRequest.body)
-      if (!isCreateAccount) {
-        return badRequestUserAlreadyExists()
-      }
-      if (isCreateAccount) {
+      const account = await this.addUserRepository.create(httpRequest.body)
+      if (account) {
         const { email, password } = httpRequest.body
         const token = await this.authentication.auth(email, password)
         if (token) {
           return created(token)
         }
       }
+
+      return badRequestUserAlreadyExists()
     } catch (error) {
       return serverError(error)
     }

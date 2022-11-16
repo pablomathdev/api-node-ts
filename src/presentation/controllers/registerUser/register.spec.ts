@@ -5,7 +5,7 @@ import { Validation } from '../../interfaces/validation'
 import { RegisterController } from './register-controller'
 import { Authentication } from '../../../domain/useCases/user/authentication'
 import { User } from '../../../domain/entitys/user'
-import { AddUser } from '../../../domain/useCases/user/add-user'
+import { AddUser, IdUser } from '../../../domain/useCases/user/add-user'
 
 const makeValidation = (): Validation => {
   class ValidationCompositeStub implements Validation {
@@ -27,8 +27,8 @@ const makeAuthentication = (): Authentication => {
 
 const makeAddUserRepository = (): AddUser => {
   class RepositoryStub implements AddUser {
-    async create (user: User): Promise<boolean> {
-      return new Promise(resolve => resolve(true))
+    async create (user: User): Promise<IdUser> {
+      return new Promise(resolve => resolve({ id: 'user_id' }))
     }
   }
   return new RepositoryStub()
@@ -92,10 +92,10 @@ describe('Register Controller', () => {
     await sut.handle(httpReq)
     expect(repositorySpy).toHaveBeenCalledWith(httpReq.body)
   })
-  test('should return 400 if repository returns a error', async () => {
+  test('should return 400 if repository no returns user_id ', async () => {
     const { sut, repositoryStub } = makeSut()
     jest.spyOn(repositoryStub, 'create')
-      .mockReturnValueOnce(new Promise(resolve => resolve(false)))
+      .mockReturnValueOnce(new Promise(resolve => resolve(null)))
     const httpReq: HttpRequest = {
       body: {
         name: 'any_name',
@@ -121,6 +121,19 @@ describe('Register Controller', () => {
 
     const httpRes = await sut.handle(httpReq)
     expect(httpRes).toEqual(serverError(new Error()))
+  })
+  test('should return user_id if repository return user', async () => {
+    const { sut } = makeSut()
+    const httpReq: HttpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password'
+      }
+    }
+
+    const httpRes = await sut.handle(httpReq)
+    expect(httpRes).toEqual(created('any_token'))
   })
 
   test('should calls authentication with correct values', async () => {

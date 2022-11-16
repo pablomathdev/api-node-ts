@@ -1,10 +1,10 @@
 import { User } from '../domain/entitys/user'
 import { Hasher } from '../domain/useCases/security/Hasher'
-import { AddUser } from '../domain/useCases/user/add-user'
+import { AddUser, IdUser } from '../domain/useCases/user/add-user'
 import { FindUserByEmail } from '../domain/useCases/user/find-user-by-email'
 
 class FindUserByEmailRepositoryStub implements FindUserByEmail {
-  async findByEmail (email: string): Promise<User> {
+  async findByEmail (email: string): Promise<any> {
     return new Promise(resolve => resolve(null))
   }
 }
@@ -29,10 +29,10 @@ class AddUserRepository implements AddUser {
     private readonly hashPassword: Hasher,
     private readonly database: Database) {}
 
-  async create (user: User): Promise<boolean> {
+  async create (user: User): Promise<IdUser> {
     const userAccount = await this.findUserByEmail.findByEmail(user.email)
     if (userAccount) {
-      return false
+      return null
     }
     const hashedPassword = await this.hashPassword.hash(user.password)
     const accountToDb = Object.assign({}, user, { password: hashedPassword })
@@ -93,7 +93,7 @@ describe('Add User Repository', () => {
       password: 'any_password'
     }
     const result = await sut.create(user)
-    expect(result).toBe(false)
+    expect(result).toBe(null)
   })
   test('should throw if findUserByEmail throws', async () => {
     const { sut, findUserByEmailRepositoryStub } = makeSut()
@@ -154,6 +154,22 @@ describe('Add User Repository', () => {
     })
   })
   test('should throw if database throws', async () => {
+    const { sut, databaseStub } = makeSut()
+    jest.spyOn(databaseStub, 'add')
+      .mockImplementationOnce(async () => {
+        return new Promise((resolve, reject) => {
+          reject(new Error())
+        })
+      })
+    const user: User = {
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+    }
+    const result = sut.create(user)
+    await expect(result).rejects.toThrow()
+  })
+  test('should return true if creat', async () => {
     const { sut, databaseStub } = makeSut()
     jest.spyOn(databaseStub, 'add')
       .mockImplementationOnce(async () => {

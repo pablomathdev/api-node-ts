@@ -122,9 +122,9 @@ describe('Add User Repository', () => {
     await sut.create(user)
     expect(hashSpy).toHaveBeenCalledWith(user.password)
   })
-  test('should throw if findUserByEmail throws', async () => {
-    const { sut, findUserByEmailRepositoryStub } = makeSut()
-    jest.spyOn(findUserByEmailRepositoryStub, 'findByEmail')
+  test('should throw if hashPassword throws', async () => {
+    const { sut, hashPasswordStub } = makeSut()
+    jest.spyOn(hashPasswordStub, 'hash')
       .mockImplementationOnce(async () => {
         return new Promise((resolve, reject) => {
           reject(new Error())

@@ -4,7 +4,7 @@ import { AddUser, IdUser } from '../domain/useCases/user/add-user'
 import { FindUserByEmail } from '../domain/useCases/user/find-user-by-email'
 
 interface Database {
-  add(input: any): Promise<void>
+  add(input: any): Promise<IdUser>
 }
 
 class AddUserRepository implements AddUser {
@@ -20,7 +20,7 @@ class AddUserRepository implements AddUser {
     const hashedPassword = await this.hashPassword.hash(user.password)
     const accountToDb = Object.assign({}, user, { password: hashedPassword })
 
-    await this.database.add(accountToDb)
+    return await this.database.add(accountToDb)
   }
 }
 const makeHashPassword = (): Hasher => {
@@ -44,7 +44,7 @@ const makeFindUserByEmailRepository = (): FindUserByEmail => {
 
 const makeDatabase = (): Database => {
   class DatabaseStub implements Database {
-    async add (input: any): Promise<void> {
+    async add (input: any): Promise<IdUser> {
       return null
     }
   }
@@ -168,20 +168,16 @@ describe('Add User Repository', () => {
     const result = sut.create(user)
     await expect(result).rejects.toThrow()
   })
-  test('should return true if creat', async () => {
+  test('should return user_id if success', async () => {
     const { sut, databaseStub } = makeSut()
     jest.spyOn(databaseStub, 'add')
-      .mockImplementationOnce(async () => {
-        return new Promise((resolve, reject) => {
-          reject(new Error())
-        })
-      })
+      .mockReturnValueOnce(new Promise(resolve => resolve({ id: 'any_id' })))
     const user: User = {
       name: 'any_name',
       email: 'any_email',
       password: 'any_password'
     }
-    const result = sut.create(user)
-    await expect(result).rejects.toThrow()
+    const result = await sut.create(user)
+    expect(result).toEqual({ id: 'any_id' })
   })
 })

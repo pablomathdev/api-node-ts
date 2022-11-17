@@ -28,4 +28,13 @@ describe('Find User By Email Repository', () => {
     await sut.findByEmail('any_email')
     expect(findSpy).toHaveBeenCalledWith('any_email')
   })
+  test('should throw if database throws', async () => {
+    const databaseRepositoryStub = new DatabaseRepoStub()
+    const sut = new FindUserByEmailRepository(databaseRepositoryStub)
+    jest.spyOn(databaseRepositoryStub, 'find')
+      .mockResolvedValueOnce(new Promise((resolve, reject) => reject(new Error())))
+
+    const result = sut.findByEmail('any_email')
+    await expect(result).rejects.toThrow()
+  })
 })

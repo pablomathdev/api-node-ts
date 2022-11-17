@@ -56,15 +56,13 @@ describe('Find User By Email Repository', () => {
       email: 'any_email'
     })
   })
-  test('should returns user if success', async () => {
+  test('should returns null if database fails', async () => {
     const databaseRepositoryStub = new DatabaseRepoStub()
     const sut = new FindUserByEmailRepository(databaseRepositoryStub)
+    jest.spyOn(databaseRepositoryStub, 'find')
+      .mockResolvedValueOnce(new Promise(resolve => resolve(null)))
 
     const result = await sut.findByEmail('any_email')
-    expect(result).toEqual({
-      id: 'any_id',
-      name: 'any_name',
-      email: 'any_email'
-    })
+    expect(result).toEqual(null)
   })
 })

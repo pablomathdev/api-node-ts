@@ -13,4 +13,5 @@
 
 
 pending...
+ - test throws in authenticate.spec.ts
 - return token in authenticate.spec.ts

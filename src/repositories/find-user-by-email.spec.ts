@@ -1,10 +1,6 @@
-
 import { User } from '../domain/entitys/user'
-import { FindUserByEmail } from '../domain/useCases/user/find-user-by-email'
-
-interface FindUserByEmailInDatabase {
-  find(email: string): Promise<User>
-}
+import { FindUserByEmailInDatabase } from '../domain/useCases/db/find-user-by-email-in-database'
+import { FindUserByEmailRepository } from './find-user-by-email'
 
 class DatabaseRepoStub implements FindUserByEmailInDatabase {
   async find (email: string): Promise<User> {
@@ -14,17 +10,6 @@ class DatabaseRepoStub implements FindUserByEmailInDatabase {
       email: 'any_email'
     }
     return new Promise(resolve => resolve(userAccount))
-  }
-}
-
-class FindUserByEmailRepository implements FindUserByEmail {
-  constructor (private readonly databaseRepository: FindUserByEmailInDatabase) {}
-  async findByEmail (email: string): Promise<User> {
-    const user = await this.databaseRepository.find(email)
-    if (user) {
-      return user
-    }
-    return null
   }
 }
 

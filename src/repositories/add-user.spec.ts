@@ -1,4 +1,4 @@
-import { AddUserRepository } from './add-user-repository'
+import { AddUserRepository } from './add-user'
 import { User } from '../domain/entitys/user'
 import { Hasher } from '../domain/useCases/security/Hasher'
 import { AddUser, IdUser } from '../domain/useCases/user/add-user'

@@ -8,14 +8,22 @@ interface FindUserByEmailInDatabase {
 
 class DatabaseRepoStub implements FindUserByEmailInDatabase {
   async find (email: string): Promise<User> {
-    return null
+    const userAccount: User = {
+      id: 'any_id',
+      name: 'any_name',
+      email: 'any_email'
+    }
+    return new Promise(resolve => resolve(userAccount))
   }
 }
 
 class FindUserByEmailRepository implements FindUserByEmail {
   constructor (private readonly databaseRepository: FindUserByEmailInDatabase) {}
   async findByEmail (email: string): Promise<User> {
-    await this.databaseRepository.find(email)
+    const user = await this.databaseRepository.find(email)
+    if (user) {
+      return user
+    }
     return null
   }
 }
@@ -36,5 +44,27 @@ describe('Find User By Email Repository', () => {
 
     const result = sut.findByEmail('any_email')
     await expect(result).rejects.toThrow()
+  })
+  test('should returns user if success', async () => {
+    const databaseRepositoryStub = new DatabaseRepoStub()
+    const sut = new FindUserByEmailRepository(databaseRepositoryStub)
+
+    const result = await sut.findByEmail('any_email')
+    expect(result).toEqual({
+      id: 'any_id',
+      name: 'any_name',
+      email: 'any_email'
+    })
+  })
+  test('should returns user if success', async () => {
+    const databaseRepositoryStub = new DatabaseRepoStub()
+    const sut = new FindUserByEmailRepository(databaseRepositoryStub)
+
+    const result = await sut.findByEmail('any_email')
+    expect(result).toEqual({
+      id: 'any_id',
+      name: 'any_name',
+      email: 'any_email'
+    })
   })
 })

@@ -1,4 +1,4 @@
 export interface Hasher {
-  hash(password: string): Promise<string>
+  hash(value: string): Promise<string>
 
 }

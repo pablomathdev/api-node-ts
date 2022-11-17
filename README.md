@@ -10,3 +10,7 @@
 [x] - if user already exists no add user
 [] - if crendentials are valids, add user 
 [] - If fields provided are valids, return success (200 Ok) and access token
+
+
+pending...
+- return token in authenticate.spec.ts

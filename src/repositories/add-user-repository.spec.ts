@@ -3,7 +3,7 @@ import { User } from '../domain/entitys/user'
 import { Hasher } from '../domain/useCases/security/Hasher'
 import { AddUser, IdUser } from '../domain/useCases/user/add-user'
 import { FindUserByEmail } from '../domain/useCases/user/find-user-by-email'
-import { Database } from '../domain/useCases/db/interface-database'
+import { AddUserInDatabase } from '../domain/useCases/db/add-user-in-database'
 
 const makeHashPassword = (): Hasher => {
   class HashPasswordStub implements Hasher {
@@ -24,28 +24,28 @@ const makeFindUserByEmailRepository = (): FindUserByEmail => {
   return new FindUserByEmailRepositoryStub()
 }
 
-const makeDatabase = (): Database => {
-  class DatabaseStub implements Database {
+const makeDatabase = (): AddUserInDatabase => {
+  class DatabaseRepoStub implements AddUserInDatabase {
     async add (input: any): Promise<IdUser> {
       return null
     }
   }
-  return new DatabaseStub()
+  return new DatabaseRepoStub()
 }
 
 interface SutTypes {
   sut: AddUser
   findUserByEmailRepositoryStub: FindUserByEmail
   hashPasswordStub: Hasher
-  databaseStub: Database
+  databaseRepoStub: AddUserInDatabase
 }
 
 const makeSut = (): SutTypes => {
-  const databaseStub = makeDatabase()
+  const databaseRepoStub = makeDatabase()
   const hashPasswordStub = makeHashPassword()
   const findUserByEmailRepositoryStub = makeFindUserByEmailRepository()
-  const sut = new AddUserRepository(findUserByEmailRepositoryStub, hashPasswordStub, databaseStub)
-  return { sut, findUserByEmailRepositoryStub, hashPasswordStub, databaseStub }
+  const sut = new AddUserRepository(findUserByEmailRepositoryStub, hashPasswordStub, databaseRepoStub)
+  return { sut, findUserByEmailRepositoryStub, hashPasswordStub, databaseRepoStub }
 }
 
 describe('Add User Repository', () => {
@@ -119,9 +119,9 @@ describe('Add User Repository', () => {
     const result = sut.create(user)
     await expect(result).rejects.toThrow()
   })
-  test('should calls database with correct values', async () => {
-    const { sut, databaseStub } = makeSut()
-    const addSpy = jest.spyOn(databaseStub, 'add')
+  test('should calls database repository with correct values', async () => {
+    const { sut, databaseRepoStub } = makeSut()
+    const addSpy = jest.spyOn(databaseRepoStub, 'add')
     const user: User = {
       name: 'any_name',
       email: 'any_email',
@@ -134,9 +134,9 @@ describe('Add User Repository', () => {
       password: 'hashed_password'
     })
   })
-  test('should throw if database throws', async () => {
-    const { sut, databaseStub } = makeSut()
-    jest.spyOn(databaseStub, 'add')
+  test('should throw if database reposiotry throws', async () => {
+    const { sut, databaseRepoStub } = makeSut()
+    jest.spyOn(databaseRepoStub, 'add')
       .mockImplementationOnce(async () => {
         return new Promise((resolve, reject) => {
           reject(new Error())
@@ -151,8 +151,8 @@ describe('Add User Repository', () => {
     await expect(result).rejects.toThrow()
   })
   test('should return user_id if success', async () => {
-    const { sut, databaseStub } = makeSut()
-    jest.spyOn(databaseStub, 'add')
+    const { sut, databaseRepoStub } = makeSut()
+    jest.spyOn(databaseRepoStub, 'add')
       .mockReturnValueOnce(new Promise(resolve => resolve({ id: 'any_id' })))
     const user: User = {
       name: 'any_name',

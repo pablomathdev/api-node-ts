@@ -10,7 +10,7 @@ import { AddUser } from '../../../domain/useCases/user/add-user'
 export class RegisterController implements Controller {
   constructor (
     private readonly validation: Validation,
-    private readonly addUserRepository: AddUser,
+    private readonly databaseRepository: AddUser,
     private readonly authentication: Authentication
   ) {}
 
@@ -21,7 +21,7 @@ export class RegisterController implements Controller {
         return badRequest(validationError)
       }
 
-      const account = await this.addUserRepository.create(httpRequest.body)
+      const account = await this.databaseRepository.create(httpRequest.body)
       if (account) {
         const { email, password } = httpRequest.body
         const token = await this.authentication.auth(email, password)

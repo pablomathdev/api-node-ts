@@ -1,5 +1,4 @@
 import { User } from '../domain/entitys/user'
-
 import { HasherCompare } from '../domain/useCases/security/hasherCompare'
 import { Authentication } from '../domain/useCases/user/authentication'
 import { FindUserByEmail } from '../domain/useCases/user/find-user-by-email'
@@ -10,7 +9,10 @@ class Authenticate implements Authentication {
 
   async auth (email: string, password: string): Promise<string> {
     const user = await this.findUserByEmail.findByEmail(email)
-    await this.comparePassword.compare(password, user.password)
+    if (user) {
+      await this.comparePassword.compare(password, user.password)
+    }
+
     return null
   }
 }
@@ -31,7 +33,7 @@ const makeFindUserByEmailRepository = (): FindUserByEmail => {
 
 const makeComparePassword = (): HasherCompare => {
   class ComparePasswordStub implements HasherCompare {
-    async compare (password: string, hashedPassword: string): Promise<boolean> {
+    async compare (value: string, hashedValue: string): Promise<boolean> {
       return true
     }
   }

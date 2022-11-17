@@ -2,12 +2,12 @@ import { Hasher } from '../domain/useCases/security/Hasher'
 import { AddUser, IdUser } from '../domain/useCases/user/add-user'
 import { FindUserByEmail } from '../domain/useCases/user/find-user-by-email'
 import { User } from '../domain/entitys/user'
-import { Database } from '../domain/useCases/db/interface-database'
+import { AddUserInDatabase } from '../domain/useCases/db/add-user-in-database'
 
 export class AddUserRepository implements AddUser {
   constructor (private readonly findUserByEmail: FindUserByEmail,
     private readonly hashPassword: Hasher,
-    private readonly database: Database) {}
+    private readonly addUserInDatabase: AddUserInDatabase) {}
 
   async create (user: User): Promise<IdUser> {
     const userAccount = await this.findUserByEmail.findByEmail(user.email)
@@ -17,6 +17,6 @@ export class AddUserRepository implements AddUser {
     const hashedPassword = await this.hashPassword.hash(user.password)
     const accountToDb = Object.assign({}, user, { password: hashedPassword })
 
-    return await this.database.add(accountToDb)
+    return await this.addUserInDatabase.add(accountToDb)
   }
 }

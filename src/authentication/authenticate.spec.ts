@@ -12,9 +12,15 @@ class Authenticate implements Authentication {
   async auth (email: string, password: string): Promise<string> {
     const user = await this.findUserByEmail.findByEmail(email)
     if (user) {
-      await this.comparePassword.compare(password, user.password)
+      const isValidPassword = await this.comparePassword.compare(password, user.password)
+      if (isValidPassword) {
+        const token = await this.encrypter.encrypt(user.id)
+
+        if (token) {
+          return token
+        }
+      }
     }
-    await this.encrypter.encrypt(user.id)
 
     return null
   }
@@ -140,5 +146,16 @@ describe('Authentication', () => {
 
     const result = sut.auth(user.email, user.password)
     await expect(result).rejects.toThrow()
+  })
+  test('should return token if Encrypter sucess', async () => {
+    const { sut } = makeSut()
+
+    const user = {
+      email: 'any_email',
+      password: 'hashed_password'
+    }
+
+    const result = await sut.auth(user.email, user.password)
+    expect(result).toBe('token')
   })
 })

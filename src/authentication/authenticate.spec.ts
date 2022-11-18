@@ -72,4 +72,19 @@ describe('Authentication', () => {
     await sut.auth(user.email, user.password)
     expect(authSpy).toHaveBeenCalledWith(user.password, 'hashed_password')
   })
+  test('should throw if FindUserByEmailRepository throws', async () => {
+    const { sut, findUserByEmailRepositoryStub } = makeSut()
+    jest.spyOn(findUserByEmailRepositoryStub, 'findByEmail')
+      .mockReturnValueOnce(new Promise((resolve, reject) => {
+        reject(new Error())
+      }))
+
+    const user = {
+      email: 'any_email',
+      password: 'hashed_password'
+    }
+
+    const result = sut.auth(user.email, user.password)
+    await expect(result).rejects.toThrow()
+  })
 })

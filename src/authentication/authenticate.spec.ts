@@ -87,4 +87,19 @@ describe('Authentication', () => {
     const result = sut.auth(user.email, user.password)
     await expect(result).rejects.toThrow()
   })
+  test('should throw if ComparePassword throws', async () => {
+    const { sut, comparePasswordStub } = makeSut()
+    jest.spyOn(comparePasswordStub, 'compare')
+      .mockReturnValueOnce(new Promise((resolve, reject) => {
+        reject(new Error())
+      }))
+
+    const user = {
+      email: 'any_email',
+      password: 'hashed_password'
+    }
+
+    const result = sut.auth(user.email, user.password)
+    await expect(result).rejects.toThrow()
+  })
 })

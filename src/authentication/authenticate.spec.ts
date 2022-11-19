@@ -1,6 +1,6 @@
 import { User } from '../domain/entitys/user'
-import { TokenGenerator } from '../domain/useCases/security/token-generator'
-import { HasherCompare } from '../domain/useCases/security/hasherCompare'
+import { TokenGenerator } from '../domain/security/token-generator'
+import { HasherCompare } from '../domain/security/hasherCompare'
 import { Authentication } from '../domain/useCases/user/authentication'
 import { FindUserByEmail } from '../domain/useCases/user/find-user-by-email'
 

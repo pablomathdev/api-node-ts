@@ -1,4 +1,5 @@
-import { Options, TokenGenerator } from '../../domain/useCases/security/token-generator'
+import { TokenGeneratorImplementation } from './token-generator-implementation'
+import { AddUserToken } from '../../domain/useCases/token/add-user-token'
 import Jwt from 'jsonwebtoken'
 
 jest.mock('jsonwebtoken', () => {
@@ -10,9 +11,6 @@ jest.mock('jsonwebtoken', () => {
   }
 })
 
-interface AddUserToken {
-  addToken(value: string, token: string): Promise<void>
-}
 const makeTokenRepository = (): AddUserToken => {
   class TokenRepositoryStub implements AddUserToken {
     async addToken (value: string): Promise<void> {
@@ -22,26 +20,6 @@ const makeTokenRepository = (): AddUserToken => {
   return new TokenRepositoryStub()
 }
 
-class TokenGeneratorImplementation implements TokenGenerator {
-  constructor (private readonly tokenRepository: AddUserToken) {}
-  static get options (): Options {
-    return {
-      expiresIn: 3600000,
-      secretKey: 'secret'
-    }
-  }
-
-  async generate (value: string): Promise<string> {
-    const token = await Jwt.sign({ user_id: value },
-      TokenGeneratorImplementation.options.secretKey,
-      { expiresIn: TokenGeneratorImplementation.options.expiresIn })
-    if (token) {
-      await this.tokenRepository.addToken(value, token)
-      return token
-    }
-    return null
-  }
-}
 const makeSut = (): any => {
   const tokenRepositoryStub = makeTokenRepository()
   const sut = new TokenGeneratorImplementation(tokenRepositoryStub)

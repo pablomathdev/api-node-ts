@@ -5,16 +5,21 @@ import { Authentication } from '../domain/useCases/user/authentication'
 import { FindUserByEmail } from '../domain/useCases/user/find-user-by-email'
 
 class Authenticate implements Authentication {
-  constructor (private readonly findUserByEmail: FindUserByEmail,
+  constructor (
+    private readonly findUserByEmail: FindUserByEmail,
     private readonly comparePassword: HasherCompare,
-    private readonly tokenGenerator: TokenGenerator) {}
+    private readonly tokenGenerator: TokenGenerator
+  ) {}
 
   async auth (email: string, password: string): Promise<string> {
     const user = await this.findUserByEmail.findByEmail(email)
     if (user) {
-      const isValidPassword = await this.comparePassword.compare(password, user.password)
+      const isValidPassword = await this.comparePassword.compare(
+        password,
+        user.password
+      )
       if (isValidPassword) {
-        const token = await this.tokenGenerator.generate(user.id, 0)
+        const token = await this.tokenGenerator.generate(user.id)
 
         if (token) {
           return token
@@ -34,7 +39,7 @@ const makeFindUserByEmailRepository = (): FindUserByEmail => {
         email: 'any_email',
         password: 'hashed_password'
       }
-      return new Promise(resolve => resolve(user))
+      return new Promise((resolve) => resolve(user))
     }
   }
   return new FindUserByEmailRepositoryStub()
@@ -51,7 +56,7 @@ const makeComparePassword = (): HasherCompare => {
 const makeTokenGenerator = (): TokenGenerator => {
   class TokenGeneratorStub implements TokenGenerator {
     async generate (value: string): Promise<string> {
-      return new Promise(resolve => resolve('token'))
+      return new Promise((resolve) => resolve('token'))
     }
   }
   return new TokenGeneratorStub()
@@ -61,8 +66,17 @@ const makeSut = (): any => {
   const tokenGeneratorStub = makeTokenGenerator()
   const comparePasswordStub = makeComparePassword()
   const findUserByEmailRepositoryStub = makeFindUserByEmailRepository()
-  const sut = new Authenticate(findUserByEmailRepositoryStub, comparePasswordStub, tokenGeneratorStub)
-  return { sut, findUserByEmailRepositoryStub, comparePasswordStub, tokenGeneratorStub }
+  const sut = new Authenticate(
+    findUserByEmailRepositoryStub,
+    comparePasswordStub,
+    tokenGeneratorStub
+  )
+  return {
+    sut,
+    findUserByEmailRepositoryStub,
+    comparePasswordStub,
+    tokenGeneratorStub
+  }
 }
 
 describe('Authentication', () => {
@@ -92,10 +106,13 @@ describe('Authentication', () => {
   })
   test('should throw if FindUserByEmailRepository throws', async () => {
     const { sut, findUserByEmailRepositoryStub } = makeSut()
-    jest.spyOn(findUserByEmailRepositoryStub, 'findByEmail')
-      .mockReturnValueOnce(new Promise((resolve, reject) => {
-        reject(new Error())
-      }))
+    jest
+      .spyOn(findUserByEmailRepositoryStub, 'findByEmail')
+      .mockReturnValueOnce(
+        new Promise((resolve, reject) => {
+          reject(new Error())
+        })
+      )
 
     const user = {
       email: 'any_email',
@@ -107,10 +124,11 @@ describe('Authentication', () => {
   })
   test('should throw if ComparePassword throws', async () => {
     const { sut, comparePasswordStub } = makeSut()
-    jest.spyOn(comparePasswordStub, 'compare')
-      .mockReturnValueOnce(new Promise((resolve, reject) => {
+    jest.spyOn(comparePasswordStub, 'compare').mockReturnValueOnce(
+      new Promise((resolve, reject) => {
         reject(new Error())
-      }))
+      })
+    )
 
     const user = {
       email: 'any_email',
@@ -130,14 +148,15 @@ describe('Authentication', () => {
     }
 
     await sut.auth(user.email, user.password)
-    expect(encryptSpy).toHaveBeenCalledWith('any_id', 0)
+    expect(encryptSpy).toHaveBeenCalledWith('any_id')
   })
   test('should throw if TokenGenerator throws', async () => {
     const { sut, tokenGeneratorStub } = makeSut()
-    jest.spyOn(tokenGeneratorStub, 'generate')
-      .mockReturnValueOnce(new Promise((resolve, reject) => {
+    jest.spyOn(tokenGeneratorStub, 'generate').mockReturnValueOnce(
+      new Promise((resolve, reject) => {
         reject(new Error())
-      }))
+      })
+    )
 
     const user = {
       email: 'any_email',
@@ -148,6 +167,17 @@ describe('Authentication', () => {
     await expect(result).rejects.toThrow()
   })
   test('should return token if TokenGenerator sucess', async () => {
+    const { sut } = makeSut()
+
+    const user = {
+      email: 'any_email',
+      password: 'hashed_password'
+    }
+
+    const result = await sut.auth(user.email, user.password)
+    expect(result).toBe('token')
+  })
+  test('should calls tokenRepository with correct values', async () => {
     const { sut } = makeSut()
 
     const user = {

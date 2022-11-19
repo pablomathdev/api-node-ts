@@ -1,4 +1,4 @@
-import { EmailValidator } from '../validation/email-validation'
+import { EmailValidator } from '../../validation/email-validation'
 import * as emailValidationLib from 'email-validator'
 import { EmailValidatorImplementation } from './email-validator-implemantation'
 

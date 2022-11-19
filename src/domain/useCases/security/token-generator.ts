@@ -1,4 +1,4 @@
 
 export interface TokenGenerator {
-  generate(value: string, expiresIn: number): Promise<string>
+  generate(value: string): Promise<string>
 }

@@ -69,4 +69,10 @@ describe('Token Generate', () => {
     await sut.generate('user_id')
     expect(addTokenSpy).toHaveBeenCalledWith('user_id', 'token')
   })
+  test('should return token if jsonwebtoken success', async () => {
+    const { sut } = makeSut()
+
+    const result = await sut.generate('user_id')
+    expect(result).toBe('token')
+  })
 })

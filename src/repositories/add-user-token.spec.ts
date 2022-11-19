@@ -27,4 +27,13 @@ describe('add user token repository', () => {
     await sut.addToken(values.user_id, values.token)
     expect(addSpy).toHaveBeenCalledWith('user_id', 'token')
   })
+  test('should throw if database repository throws', async () => {
+    const databaseRepository = new DatabaseRepository()
+    const sut = new AddUserTokenRepository(databaseRepository)
+    jest.spyOn(databaseRepository, 'add')
+      .mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    const values = { user_id: 'user_id', token: 'token' }
+    const result = sut.addToken(values.user_id, values.token)
+    await expect(result).rejects.toThrow()
+  })
 })

@@ -1,5 +1,5 @@
 import { User } from '../domain/entitys/user'
-import { Encrypter } from '../domain/useCases/security/encrypter'
+import { TokenGenerator } from '../domain/useCases/security/token-generator'
 import { HasherCompare } from '../domain/useCases/security/hasherCompare'
 import { Authentication } from '../domain/useCases/user/authentication'
 import { FindUserByEmail } from '../domain/useCases/user/find-user-by-email'
@@ -7,14 +7,14 @@ import { FindUserByEmail } from '../domain/useCases/user/find-user-by-email'
 class Authenticate implements Authentication {
   constructor (private readonly findUserByEmail: FindUserByEmail,
     private readonly comparePassword: HasherCompare,
-    private readonly encrypter: Encrypter) {}
+    private readonly tokenGenerator: TokenGenerator) {}
 
   async auth (email: string, password: string): Promise<string> {
     const user = await this.findUserByEmail.findByEmail(email)
     if (user) {
       const isValidPassword = await this.comparePassword.compare(password, user.password)
       if (isValidPassword) {
-        const token = await this.encrypter.encrypt(user.id)
+        const token = await this.tokenGenerator.generate(user.id, 0)
 
         if (token) {
           return token
@@ -48,21 +48,21 @@ const makeComparePassword = (): HasherCompare => {
   }
   return new ComparePasswordStub()
 }
-const makeEncrypter = (): Encrypter => {
-  class EncrypterStub implements Encrypter {
-    async encrypt (value: string): Promise<string> {
+const makeTokenGenerator = (): TokenGenerator => {
+  class TokenGeneratorStub implements TokenGenerator {
+    async generate (value: string): Promise<string> {
       return new Promise(resolve => resolve('token'))
     }
   }
-  return new EncrypterStub()
+  return new TokenGeneratorStub()
 }
 
 const makeSut = (): any => {
-  const encrypterStub = makeEncrypter()
+  const tokenGeneratorStub = makeTokenGenerator()
   const comparePasswordStub = makeComparePassword()
   const findUserByEmailRepositoryStub = makeFindUserByEmailRepository()
-  const sut = new Authenticate(findUserByEmailRepositoryStub, comparePasswordStub, encrypterStub)
-  return { sut, findUserByEmailRepositoryStub, comparePasswordStub, encrypterStub }
+  const sut = new Authenticate(findUserByEmailRepositoryStub, comparePasswordStub, tokenGeneratorStub)
+  return { sut, findUserByEmailRepositoryStub, comparePasswordStub, tokenGeneratorStub }
 }
 
 describe('Authentication', () => {
@@ -120,9 +120,9 @@ describe('Authentication', () => {
     const result = sut.auth(user.email, user.password)
     await expect(result).rejects.toThrow()
   })
-  test('should call Encrypter with correct value', async () => {
-    const { sut, encrypterStub } = makeSut()
-    const encryptSpy = jest.spyOn(encrypterStub, 'encrypt')
+  test('should call TokenGenerator with correct value', async () => {
+    const { sut, tokenGeneratorStub } = makeSut()
+    const encryptSpy = jest.spyOn(tokenGeneratorStub, 'generate')
 
     const user = {
       email: 'any_email',
@@ -130,11 +130,11 @@ describe('Authentication', () => {
     }
 
     await sut.auth(user.email, user.password)
-    expect(encryptSpy).toHaveBeenCalledWith('any_id')
+    expect(encryptSpy).toHaveBeenCalledWith('any_id', 0)
   })
-  test('should throw if Encrypter throws', async () => {
-    const { sut, encrypterStub } = makeSut()
-    jest.spyOn(encrypterStub, 'encrypt')
+  test('should throw if TokenGenerator throws', async () => {
+    const { sut, tokenGeneratorStub } = makeSut()
+    jest.spyOn(tokenGeneratorStub, 'generate')
       .mockReturnValueOnce(new Promise((resolve, reject) => {
         reject(new Error())
       }))
@@ -147,7 +147,7 @@ describe('Authentication', () => {
     const result = sut.auth(user.email, user.password)
     await expect(result).rejects.toThrow()
   })
-  test('should return token if Encrypter sucess', async () => {
+  test('should return token if TokenGenerator sucess', async () => {
     const { sut } = makeSut()
 
     const user = {

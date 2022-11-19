@@ -1,20 +1,8 @@
-
-import { AddUserToken } from '../domain/useCases/token/add-user-token'
-
-interface AddTokenInDatabase {
-  add(value: string, token: string): Promise<void>
-}
-
+import { AddTokenInDatabase } from '../domain/useCases/db/add-user-token-in-database'
+import { AddUserTokenRepository } from './add-user-token'
 class DatabaseRepository implements AddTokenInDatabase {
   async add (value: string, token: string): Promise<void> {
 
-  }
-}
-
-class AddUserTokenRepository implements AddUserToken {
-  constructor (private readonly addTokenInDatabase: AddTokenInDatabase) {}
-  async addToken (value: string, token: string): Promise<void> {
-    await this.addTokenInDatabase.add(value, token)
   }
 }
 

@@ -47,4 +47,18 @@ describe('Mongo Repository', () => {
     const userAccount = await sut.add(user)
     expect(userAccount.id).toBeTruthy()
   })
+  test('should find user by email', async () => {
+    const sut = new MongoRepository(UserModel)
+    const user = {
+      name: 'any_name',
+      email: 'any_email',
+      password: 'any_password'
+
+    }
+
+    const userAccount = await sut.find(user.email)
+    expect(userAccount.id).toBeTruthy()
+    expect(userAccount.email).toBe('any_email')
+    expect(userAccount.name).toBe('any_name')
+  })
 })

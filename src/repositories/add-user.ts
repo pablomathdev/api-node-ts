@@ -17,6 +17,6 @@ export class AddUserRepository implements AddUser {
     const hashedPassword = await this.hashPassword.hash(user.password)
     const accountToDb = Object.assign({}, user, { password: hashedPassword })
 
-    return await this.addUserInDatabase.add(accountToDb)
+    return await this.addUserInDatabase.addUser(accountToDb)
   }
 }

@@ -26,7 +26,7 @@ const makeFindUserByEmailRepository = (): FindUserByEmail => {
 
 const makeDatabase = (): AddUserInDatabase => {
   class DatabaseRepoStub implements AddUserInDatabase {
-    async add (input: any): Promise<IdUser> {
+    async addUser (input: any): Promise<IdUser> {
       return null
     }
   }
@@ -121,7 +121,7 @@ describe('Add User Repository', () => {
   })
   test('should calls database repository with correct values', async () => {
     const { sut, databaseRepoStub } = makeSut()
-    const addSpy = jest.spyOn(databaseRepoStub, 'add')
+    const addSpy = jest.spyOn(databaseRepoStub, 'addUser')
     const user: User = {
       name: 'any_name',
       email: 'any_email',
@@ -136,7 +136,7 @@ describe('Add User Repository', () => {
   })
   test('should throw if database reposiotry throws', async () => {
     const { sut, databaseRepoStub } = makeSut()
-    jest.spyOn(databaseRepoStub, 'add')
+    jest.spyOn(databaseRepoStub, 'addUser')
       .mockImplementationOnce(async () => {
         return new Promise((resolve, reject) => {
           reject(new Error())
@@ -152,7 +152,7 @@ describe('Add User Repository', () => {
   })
   test('should return user_id if success', async () => {
     const { sut, databaseRepoStub } = makeSut()
-    jest.spyOn(databaseRepoStub, 'add')
+    jest.spyOn(databaseRepoStub, 'addUser')
       .mockReturnValueOnce(new Promise(resolve => resolve({ id: 'any_id' })))
     const user: User = {
       name: 'any_name',

@@ -1,4 +1,4 @@
 
 export interface AddTokenInDatabase {
-  add(value: string, token: string): Promise<void>
+  addToken(id: string, token: string): Promise<void>
 }

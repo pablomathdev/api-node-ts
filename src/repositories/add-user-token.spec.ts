@@ -1,7 +1,7 @@
 import { AddTokenInDatabase } from '../domain/useCases/db/add-user-token-in-database'
 import { AddUserTokenRepository } from './add-user-token'
 class DatabaseRepository implements AddTokenInDatabase {
-  async addToken (token: string): Promise<void> {
+  async addToken (id: string, token: string): Promise<void> {
 
   }
 }

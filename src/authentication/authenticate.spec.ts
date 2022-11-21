@@ -1,35 +1,8 @@
 import { User } from '../domain/entitys/user'
 import { TokenGenerator } from '../domain/security/token-generator'
 import { HasherCompare } from '../domain/security/hasherCompare'
-import { Authentication } from '../domain/useCases/user/authentication'
 import { FindUserByEmail } from '../domain/useCases/user/find-user-by-email'
-
-class Authenticate implements Authentication {
-  constructor (
-    private readonly findUserByEmail: FindUserByEmail,
-    private readonly comparePassword: HasherCompare,
-    private readonly tokenGenerator: TokenGenerator
-  ) {}
-
-  async auth (email: string, password: string): Promise<string> {
-    const user = await this.findUserByEmail.findByEmail(email)
-    if (user) {
-      const isValidPassword = await this.comparePassword.compare(
-        password,
-        user.password
-      )
-      if (isValidPassword) {
-        const token = await this.tokenGenerator.generate(user.id)
-
-        if (token) {
-          return token
-        }
-      }
-    }
-
-    return null
-  }
-}
+import { Authenticate } from './authenticate'
 const makeFindUserByEmailRepository = (): FindUserByEmail => {
   class FindUserByEmailRepositoryStub implements FindUserByEmail {
     async findByEmail (email: string): Promise<User> {

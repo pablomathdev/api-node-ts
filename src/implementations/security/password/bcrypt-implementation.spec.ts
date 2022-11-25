@@ -2,13 +2,16 @@ import { Hasher } from '../../../domain/security/Hasher'
 import { HasherCompare } from '../../../domain/security/hasherCompare'
 import bcrypt from 'bcrypt'
 
-// jest.mock('bcrypt', () => {
-//   return {
-//     async hash (): Promise<string> {
-//       return new Promise(resolve => resolve('hashed_password'))
-//     }
-//   }
-// })
+jest.mock('bcrypt', () => {
+  return {
+    async hash (): Promise<string> {
+      return new Promise(resolve => resolve('hashed_password'))
+    },
+    async compare (): Promise<boolean> {
+      return new Promise(resolve => resolve(true))
+    }
+  }
+})
 jest.mock('bcrypt')
 
 class BcryptImplementation implements Hasher, HasherCompare {
@@ -34,17 +37,10 @@ describe('Bcrypt', () => {
     expect(hashSpy).toHaveBeenCalledWith('user_password', 10)
     expect(compareSpy).toHaveBeenCalledWith('user_password', 'hashed_password')
   })
-  //   test('should returns hashed password if bcrypt hash success', async () => {
-  //     const sut = new BcryptImplementation()
+  test('should returns hashed password if bcrypt hash success', async () => {
+    const sut = new BcryptImplementation()
 
-  //     const result = await sut.hash('user_password')
-  //     expect(result).toBe('hashed_password')
-  //   })
-  //   test('should call bcrypt with correct values', async () => {
-  //     const sut = new BcryptImplementation()
-  //     const hashSpy = jest.spyOn(bcrypt, 'hash')
-
-//     await sut.hash('user_password')
-//     expect(hashSpy).toHaveBeenCalledWith('user_password', 10)
-//   })
+    const result = await sut.hash('user_password')
+    expect(result).toBe('hashed_password')
+  })
 })

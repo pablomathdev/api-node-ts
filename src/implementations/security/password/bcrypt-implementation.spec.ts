@@ -12,7 +12,6 @@ jest.mock('bcrypt', () => {
     }
   }
 })
-jest.mock('bcrypt')
 
 class BcryptImplementation implements Hasher, HasherCompare {
   async hash (value: string): Promise<string> {
@@ -22,8 +21,8 @@ class BcryptImplementation implements Hasher, HasherCompare {
   }
 
   async compare (value: string, hashedValue: string): Promise<boolean> {
-    await bcrypt.compare(value, hashedValue)
-    return null
+    const match = await bcrypt.compare(value, hashedValue)
+    return match
   }
 }
 
@@ -42,5 +41,11 @@ describe('Bcrypt', () => {
 
     const result = await sut.hash('user_password')
     expect(result).toBe('hashed_password')
+  })
+  test('should return true if password matches', async () => {
+    const sut = new BcryptImplementation()
+
+    const result = await sut.compare('user_password', 'hashed_password')
+    expect(result).toBe(true)
   })
 })

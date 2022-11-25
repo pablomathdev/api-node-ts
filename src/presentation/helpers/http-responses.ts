@@ -24,6 +24,6 @@ export const serverError = (error: Error): HttpResponse => {
 export const created = (token: string): HttpResponse => {
   return {
     statusCode: 201,
-    accessToken: token
+    body: token
   }
 }

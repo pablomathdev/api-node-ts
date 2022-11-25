@@ -1,6 +1,0 @@
-
-describe('Register Route', () => {
-  test('', () => {
-
-  })
-})

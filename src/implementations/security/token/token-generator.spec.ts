@@ -1,5 +1,5 @@
 import { TokenGeneratorImplementation } from './token-generator-implementation'
-import { AddUserToken } from '../../domain/useCases/token/add-user-token'
+import { AddUserToken } from '../../../domain/useCases/token/add-user-token'
 import Jwt from 'jsonwebtoken'
 
 jest.mock('jsonwebtoken', () => {

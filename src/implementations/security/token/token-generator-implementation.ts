@@ -1,6 +1,6 @@
-import { TokenGenerator, Options } from '../../domain/security/token-generator'
+import { TokenGenerator, Options } from '../../../domain/security/token-generator'
 import Jwt from 'jsonwebtoken'
-import { AddUserToken } from '../../domain/useCases/token/add-user-token'
+import { AddUserToken } from '../../../domain/useCases/token/add-user-token'
 export class TokenGeneratorImplementation implements TokenGenerator {
   constructor (private readonly tokenRepository: AddUserToken) {}
   static get options (): Options {

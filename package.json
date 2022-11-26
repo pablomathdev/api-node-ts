@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --silent --noStackTrace --passWithNoTests --runInBand",
-    "test:unit": "npm test -- --watch --coverage=false",
-    "test:staged": "npm test -- --findRelatedTests"
+    "test:unit": "npm test -- --watch --coverage=false -c jest-unit.config.js",
+    "test:staged": "npm test -- --findRelatedTests",
+    "test:integration": "npm test -- --watch --coverage=false -c jest-integration.config.js"
   },
   "keywords": [],
   "author": "",

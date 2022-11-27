@@ -17,6 +17,7 @@ export class RegisterController implements Controller {
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const validationError = this.validation.validate(httpRequest.body)
+
       if (validationError) {
         return badRequest(validationError)
       }
@@ -32,7 +33,6 @@ export class RegisterController implements Controller {
 
       return badRequestUserAlreadyExists()
     } catch (error) {
-      console.error(error)
       return serverError(error)
     }
   }

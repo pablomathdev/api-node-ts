@@ -9,7 +9,8 @@ export class EmailValidation implements Validation {
   constructor (private readonly emailvalidator: EmailValidator) {}
   validate (input: any): any {
     const email = input.email
-    if (!this.emailvalidator.isValid(email)) {
+    const valid = this.emailvalidator.isValid(email)
+    if (valid === false) {
       return new InvalidEmail()
     }
   }

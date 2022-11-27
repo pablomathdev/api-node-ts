@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 import { UserModel } from './models/user'
 
 const makeSut = (): any => {
-  return new MongoRepository(UserModel)
+  return new MongoRepository()
 }
 
 describe('Mongo Repository', () => {
@@ -53,8 +53,9 @@ describe('Mongo Repository', () => {
 
     await sut.addUser(user)
     const userAccount = await sut.find(user.email)
-    await sut.addToken(userAccount.id, 'any_token')
+    // expect(userAccount).toBe('w')
+    await sut.addToken(userAccount.id, 'token')
     const result = await sut.find(user.email)
-    expect(result.accessToken).toBe('any_token')
+    expect(result.accessToken).toBe('token')
   })
 })

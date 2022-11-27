@@ -4,5 +4,5 @@ export type Options = {
 }
 
 export interface TokenGenerator {
-  generate(value: string): Promise<string>
+  generate(value: any): Promise<string>
 }

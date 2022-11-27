@@ -4,16 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --silent --noStackTrace --passWithNoTests --runInBand",
+    "test": "jest --noStackTrace --passWithNoTests --runInBand",
     "test:unit": "npm test -- --watch --coverage=false -c jest-unit.config.js",
     "test:staged": "npm test -- --findRelatedTests",
-    "test:integration": "npm test -- --watch --coverage=false -c jest-integration.config.js"
+    "test:integration": "npm test -- --watch --coverage=false -c jest-integration.config.js",
+    "start": "sucrase-node src/app/app.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
+    "@types/body-parser": "^1.19.2",
     "@types/express": "^4.17.14",
     "@types/jest": "^29.2.2",
     "@types/jsonwebtoken": "^8.5.9",
@@ -29,13 +31,14 @@
     "husky": "^8.0.2",
     "jest": "^29.3.1",
     "lint-staged": "^13.0.3",
+    "sucrase": "^3.29.0",
     "supertest": "^6.3.1",
     "ts-jest": "^29.0.3",
-    "ts-node": "^10.9.1",
     "typescript": "^4.8.4"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.1",
     "email-validator": "^2.0.4",
     "express": "^4.18.2",
     "jsonwebtoken": "^8.5.1",

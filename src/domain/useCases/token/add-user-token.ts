@@ -1,4 +1,4 @@
 
 export interface AddUserToken {
-  addToken(value: string, token: string): Promise<void>
+  addToken(value: any, token: string): Promise<void>
 }

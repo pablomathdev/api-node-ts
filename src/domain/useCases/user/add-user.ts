@@ -1,7 +1,7 @@
 import { User } from '../../entitys/user'
 
-export type IdUser = {
-  id: string
+export interface IdUser {
+  id: any
 }
 
 export interface AddUser {

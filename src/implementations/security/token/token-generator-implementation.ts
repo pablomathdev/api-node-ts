@@ -10,7 +10,7 @@ export class TokenGeneratorImplementation implements TokenGenerator {
     }
   }
 
-  async generate (value: string): Promise<string> {
+  async generate (value: any): Promise<string> {
     const token = await Jwt.sign({ user_id: value },
       TokenGeneratorImplementation.options.secretKey,
       { expiresIn: TokenGeneratorImplementation.options.expiresIn })

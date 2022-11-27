@@ -3,7 +3,7 @@ import { Schema, model } from 'mongoose'
 const userSchema = new Schema({
   name: { type: String },
   email: { type: String },
-  password: { type: String }
-}, { timestamps: true })
-
+  password: { type: String },
+  accessToken: { type: String }
+})
 export const UserModel = model('User', userSchema)

@@ -32,6 +32,7 @@ export class RegisterController implements Controller {
 
       return badRequestUserAlreadyExists()
     } catch (error) {
+      console.error(error)
       return serverError(error)
     }
   }

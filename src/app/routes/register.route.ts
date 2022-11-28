@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { registerControllerFactory } from '../../presentation/factorys/factorys'
+import { registerControllerFactory } from '../../presentation/factories/factorys'
 import { RequestAndResponse } from './request-response'
 
 let registerRoute = Router()

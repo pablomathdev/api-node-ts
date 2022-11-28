@@ -1,8 +1,9 @@
 
 export class MissingParamError extends Error {
   constructor (paramName: string) {
-    super(`Missing param: ${paramName}`)
+    super()
     this.name = 'Missing Param Error'
+    this.message = `Missing param: ${paramName}`
   }
 }
 
@@ -16,13 +17,15 @@ export class ServerError extends Error {
 
 export class InvalidEmail extends Error {
   constructor () {
-    super('Invalid Email')
+    super()
     this.name = 'Invalid Email'
+    this.message = 'Invalid Email'
   }
 }
 export class EmailAlreadyExistsError extends Error {
   constructor () {
-    super('Email Already Exists')
+    super()
     this.name = 'EmailAlreadyExistsError'
+    this.message = 'Email already exists'
   }
 }

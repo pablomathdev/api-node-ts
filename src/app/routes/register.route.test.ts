@@ -31,4 +31,22 @@ describe('Register route', () => {
       })
       .expect(400)
   })
+  test('Should return 400 if no email is provided', async () => {
+    await request(app)
+      .post('/register')
+      .send({
+        name: 'Pablo',
+        password: '123'
+      })
+      .expect(400)
+  })
+  test('Should return 400 if no pass is provided', async () => {
+    await request(app)
+      .post('/register')
+      .send({
+        name: 'Pablo',
+        password: '123'
+      })
+      .expect(400)
+  })
 })

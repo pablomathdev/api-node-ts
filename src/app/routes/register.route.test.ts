@@ -1,5 +1,6 @@
 import request from 'supertest'
 import app from '../config/app'
+import { hash } from 'bcrypt'
 import mongoose from 'mongoose'
 import { UserModel } from '../../implementations/db/mongo/models/user'
 
@@ -12,6 +13,7 @@ describe('Register route', () => {
     await UserModel.deleteMany({})
     await mongoose.disconnect()
   })
+
   test('Should return 201 if user added', async () => {
     await request(app)
       .post('/register')
@@ -56,6 +58,22 @@ describe('Register route', () => {
       .send({
         name: 'Pablo',
         email: 'pablomatheus18koe',
+        password: '123'
+      })
+      .expect(400)
+  })
+  test('Should return 400 if invalid email already exists', async () => {
+    const hashPassword = await hash('123', 12)
+    await UserModel.create({
+      name: 'Pablo',
+      email: 'pablomatheus144@gmail.com',
+      password: hashPassword
+    })
+    await request(app)
+      .post('/register')
+      .send({
+        name: 'Pablo',
+        email: 'pablomatheus144@gmail.com',
         password: '123'
       })
       .expect(400)

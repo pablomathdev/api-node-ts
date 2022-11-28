@@ -1,18 +1,7 @@
-// import { User } from '../../../domain/entitys/user'
-// import { IdUser } from '../../../domain/useCases/user/add-user'
 import { AddTokenInDatabase } from '../../../domain/useCases/db/add-user-token-in-database'
 import { AddUserInDatabase } from '../../../domain/useCases/db/add-user-in-database'
 import { FindUserByEmailInDatabase } from '../../../domain/useCases/db/find-user-by-email-in-database'
 import { UserModel } from './models/user'
-// import mongoose from 'mongoose'
-
-// interface UserMongo extends User {
-//   id: mongoose.Types.ObjectId
-// }
-
-// interface IdUserMongo extends Omit<IdUser, 'id'> {
-//   id: mongoose.Types.ObjectId
-// }
 
 export class MongoRepository implements
  AddUserInDatabase,

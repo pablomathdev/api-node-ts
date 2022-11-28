@@ -1,5 +1,5 @@
 import request from 'supertest'
-import app from '../server'
+import app from '../config/app'
 import mongoose from 'mongoose'
 import { UserModel } from '../../implementations/db/mongo/models/user'
 

@@ -22,4 +22,13 @@ describe('Register route', () => {
       })
       .expect(201)
   })
+  test('Should return 400 if no name is provided', async () => {
+    await request(app)
+      .post('/register')
+      .send({
+        email: 'pablomatheus18koe@gmail.com',
+        password: '123'
+      })
+      .expect(400)
+  })
 })

@@ -50,4 +50,14 @@ describe('Register route', () => {
       })
       .expect(400)
   })
+  test('Should return 400 if invalid email is provided', async () => {
+    await request(app)
+      .post('/register')
+      .send({
+        name: 'Pablo',
+        email: 'pablomatheus18koe',
+        password: '123'
+      })
+      .expect(400)
+  })
 })

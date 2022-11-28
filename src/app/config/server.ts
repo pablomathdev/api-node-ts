@@ -1,13 +1,8 @@
-import mongoose from 'mongoose'
+import { mongoConnect } from '../../implementations/db/mongo/conn/mongo-connect'
+import env from './env'
 import app from './app'
 
-async function mongoConnect (): Promise<void> {
-  await mongoose.connect('mongodb://localhost:27017/api').then(() => {
-    app.listen(3000, () => {
-      console.log('server running')
-    })
-    console.log('mongo running')
-  })
-}
-
-void mongoConnect()
+void mongoConnect(env.mongoUri)
+app.listen(env.port, () => {
+  console.log(`server running on port: ${env.port}`)
+})

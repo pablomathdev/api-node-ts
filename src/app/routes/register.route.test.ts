@@ -1,17 +1,17 @@
 import request from 'supertest'
 import app from '../config/app'
 import { hash } from 'bcrypt'
-import mongoose from 'mongoose'
+import { deleteDocs, mongoConnect, mongoDisconnect } from '../../implementations/db/mongo/conn/mongo-connect'
 import { UserModel } from '../../implementations/db/mongo/models/user'
+import env from '../config/env'
 
 describe('Register route', () => {
   beforeAll(async () => {
-    const url = 'mongodb://localhost:27017/test'
-    await mongoose.connect(url)
+    await mongoConnect(env.mongoUriTest)
   })
   afterAll(async () => {
-    await UserModel.deleteMany({})
-    await mongoose.disconnect()
+    await deleteDocs(UserModel)
+    await mongoDisconnect()
   })
 
   test('Should return 201 if user added', async () => {

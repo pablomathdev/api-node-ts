@@ -1,5 +1,6 @@
 import { MongoRepository } from './mongo-repository'
-import mongoose from 'mongoose'
+import { mongoConnect, mongoDisconnect, deleteDocs } from './conn/mongo-connect'
+import env from '../../../app/config/env'
 import { UserModel } from './models/user'
 
 const makeSut = (): any => {
@@ -8,12 +9,11 @@ const makeSut = (): any => {
 
 describe('Mongo Repository', () => {
   beforeAll(async () => {
-    const url = 'mongodb://localhost:27017/test'
-    await mongoose.connect(url)
+    await mongoConnect(env.mongoUriTest)
   })
   afterAll(async () => {
-    await UserModel.deleteMany({})
-    await mongoose.disconnect()
+    await deleteDocs(UserModel)
+    await mongoDisconnect()
   })
 
   test('should return user id if user is added ', async () => {

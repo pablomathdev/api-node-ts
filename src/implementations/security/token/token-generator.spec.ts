@@ -1,6 +1,7 @@
 import { TokenGeneratorImplementation } from './token-generator-implementation'
 import { AddUserToken } from '../../../domain/useCases/token/add-user-token'
 import Jwt from 'jsonwebtoken'
+import env from '../../../app/config/env'
 
 jest.mock('jsonwebtoken', () => {
   return {
@@ -33,7 +34,7 @@ describe('Token Generate', () => {
     const { sut } = makeSut()
     const signSpy = jest.spyOn(Jwt, 'sign')
     await sut.generate('user_id')
-    expect(signSpy).toHaveBeenCalledWith({ user_id: 'user_id' }, 'secret', { expiresIn: 3600000 })
+    expect(signSpy).toHaveBeenCalledWith({ user_id: 'user_id' }, env.JsonWebTokenSecret, { expiresIn: 3600000 })
   })
   test('should throw if jsonwebtoken throws', async () => {
     const { sut } = makeSut()

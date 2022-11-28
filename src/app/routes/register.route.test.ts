@@ -17,7 +17,7 @@ describe('Register route', () => {
       .post('/register')
       .send({
         name: 'Pablo',
-        email: 'pablomatheus18ko12@gmail.com',
+        email: 'pablomatheus18koe@gmail.com',
         password: '123'
       })
       .expect(201)

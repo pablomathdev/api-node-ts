@@ -1,5 +1,5 @@
 ### Register
-[] - Register user with fields name,email,password
+[x] - Register user with fields name,email,password
  
 
 #### Business logic
@@ -8,6 +8,6 @@
 [x] - Validate Email
 [x] - If Invalid Email is provided,return bad request (error 400)
 [x] - if user already exists no add user
-[] - if crendentials are valids, add user 
-[] - If fields provided are valids, return success (200 Ok) and access token
+[x] - if crendentials are valids, add user 
+[x] - If fields provided are valids, return success (200 Ok) and access token
 

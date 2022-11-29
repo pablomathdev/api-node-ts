@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --silent --noStackTrace --passWithNoTests --runInBand",
+    "test": "jest --coverage=false --silent --noStackTrace --passWithNoTests --runInBand",
     "test:unit": "npm test -- --watch --coverage=false -c jest-unit.config.js",
     "test:staged": "npm test -- --findRelatedTests",
     "test:integration": "npm test -- --watch --coverage=false -c jest-integration.config.js",
     "start": "sucrase-node src/app/config/server.ts",
-    "test:badges": "npm test -- --coverage && jest-coverage-badges"
+    "test:coverage":"npm test -- --coverage",
+    "test:badges": "npm run test:coverage && jest-coverage-badges"
   },
   "keywords": [],
   "author": "",

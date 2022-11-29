@@ -4,9 +4,14 @@ module.exports = {
   collectCoverage: true,
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
-  coverageReporters: ['json-summary'],
+  coverageReporters: ['json-summary', 'lcov', 'text'],
   collectCoverageFrom: [
-    '<rootDir>/src/**/*.ts'],
+    '<rootDir>/src/**/*.ts',
+    '!<rootDir>/src/app/**',
+    '!<rootDir>/src/domain/**',
+    '!<rootDir>/src/presentation/helpers/http-protocols.ts',
+    '!<rootDir>/src/presentation/interfaces/**'
+  ],
   transform: {
     '.+\\.ts$': 'ts-jest'
   }

@@ -4,6 +4,7 @@ module.exports = {
   collectCoverage: true,
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
+  coverageReporters: ['json-summary'],
   collectCoverageFrom: [
     '<rootDir>/src/**/*.ts'],
   transform: {

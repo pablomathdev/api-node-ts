@@ -1,7 +1,8 @@
+
 import { Authentication } from '../../../domain/useCases/user/authentication'
 import { MissingParamError } from '../../helpers/errors'
 import { HttpRequest, HttpResponse } from '../../helpers/http-protocols'
-import { badRequest, ok } from '../../helpers/http-responses'
+import { badRequest, ok, serverError } from '../../helpers/http-responses'
 import { Controller } from '../../interfaces/controller'
 import { Validation } from '../../interfaces/validation'
 
@@ -37,9 +38,11 @@ class LoginController implements Controller {
       if (token) {
         return ok(token)
       }
-      return null
-    } catch {
-
+      return {
+        statusCode: 401
+      }
+    } catch (error) {
+      return serverError(error)
     }
   }
 }
@@ -98,5 +101,18 @@ describe('Login User', () => {
     }
     const result = await sut.handle(httpRequest)
     expect(result).toEqual(ok('token'))
+  })
+  test('should returns 401 if authentication no returns a token', async () => {
+    const { sut, authenticationStub } = makeSut()
+    jest.spyOn(authenticationStub, 'auth')
+      .mockReturnValueOnce(new Promise(resolve => resolve(null)))
+    const httpRequest = {
+      body: {
+        email: 'any_email',
+        password: 'any_password'
+      }
+    }
+    const result = await sut.handle(httpRequest)
+    expect(result.statusCode).toEqual(401)
   })
 })

@@ -10,7 +10,7 @@
     "test:integration": "npm test -- --watch --coverage=false -c jest-integration.config.js",
     "start": "sucrase-node src/app/config/server.ts",
     "test:coverage":"npm test -- --coverage",
-    "test:badges": "npm run test:coverage && jest-coverage-badges"
+    "test:badges": "npm run test:coverage && jest-coverage-badges --output './badges'"
   },
   "keywords": [],
   "author": "",

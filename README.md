@@ -13,9 +13,9 @@
 <p align="center"> Api de registro e login de usuário utilizando typescript e node.js.</p>
 <hr>
 
-## Table of Contents
+## Features
    - Register User
-
+   - Login User ...🔨👷
 ### Developed with:
  - **Principles**
     - Single Responsability

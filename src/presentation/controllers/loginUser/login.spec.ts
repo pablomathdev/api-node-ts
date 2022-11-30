@@ -2,7 +2,7 @@
 import { Authentication } from '../../../domain/useCases/user/authentication'
 import { MissingParamError } from '../../helpers/errors'
 import { HttpRequest, HttpResponse } from '../../helpers/http-protocols'
-import { badRequest, ok, serverError } from '../../helpers/http-responses'
+import { badRequest, ok, serverError, Unauthorized } from '../../helpers/http-responses'
 import { Controller } from '../../interfaces/controller'
 import { Validation } from '../../interfaces/validation'
 
@@ -38,9 +38,7 @@ class LoginController implements Controller {
       if (token) {
         return ok(token)
       }
-      return {
-        statusCode: 401
-      }
+      return Unauthorized()
     } catch (error) {
       return serverError(error)
     }
@@ -113,6 +111,6 @@ describe('Login User', () => {
       }
     }
     const result = await sut.handle(httpRequest)
-    expect(result.statusCode).toEqual(401)
+    expect(result).toEqual(Unauthorized())
   })
 })

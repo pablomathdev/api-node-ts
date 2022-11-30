@@ -1,4 +1,6 @@
+import { MissingParamError } from '../../helpers/errors'
 import { HttpRequest, HttpResponse } from '../../helpers/http-protocols'
+import { badRequest } from '../../helpers/http-responses'
 import { Controller } from '../../interfaces/controller'
 import { Validation } from '../../interfaces/validation'
 
@@ -14,8 +16,15 @@ const makeValidation = (): Validation => {
 class LoginController implements Controller {
   constructor (private readonly validation: Validation) {}
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    this.validation.validate(httpRequest.body)
-    return null
+    try {
+      const validationError = this.validation.validate(httpRequest.body)
+      if (validationError) {
+        return badRequest(validationError)
+      }
+      return null
+    } catch {
+
+    }
   }
 }
 
@@ -37,5 +46,16 @@ describe('Login User', () => {
     }
     await sut.handle(httpRequest)
     expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+  test('should returns 400 if validation returns a error', async () => {
+    const { sut, validationStub } = makeSut()
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new MissingParamError('email'))
+    const httpRequest = {
+      body: {
+        password: 'any_password'
+      }
+    }
+    const result = await sut.handle(httpRequest)
+    expect(result).toEqual(badRequest(new MissingParamError('email')))
   })
 })

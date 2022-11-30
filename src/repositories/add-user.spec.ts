@@ -1,5 +1,5 @@
 import { AddUserRepository } from './add-user'
-import { User } from '../domain/entitys/user'
+import { User } from '../domain/entities/user'
 import { Hasher } from '../domain/security/Hasher'
 import { AddUser, IdUser } from '../domain/useCases/user/add-user'
 import { FindUserByEmail } from '../domain/useCases/user/find-user-by-email'

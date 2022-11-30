@@ -1,4 +1,4 @@
-import { User } from '../domain/entitys/user'
+import { User } from '../domain/entities/user'
 import { FindUserByEmailInDatabase } from '../domain/useCases/db/find-user-by-email-in-database'
 import { FindUserByEmailRepository } from './find-user-by-email'
 

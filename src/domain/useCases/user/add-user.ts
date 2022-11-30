@@ -1,4 +1,4 @@
-import { User } from '../../entitys/user'
+import { User } from '../../entities/user'
 
 export interface IdUser {
   id: any

@@ -4,7 +4,7 @@ import { HttpRequest } from '../../helpers/http-protocols'
 import { Validation } from '../../interfaces/validation'
 import { RegisterController } from './register-controller'
 import { Authentication } from '../../../domain/useCases/user/authentication'
-import { User } from '../../../domain/entitys/user'
+import { User } from '../../../domain/entities/user'
 import { AddUser, IdUser } from '../../../domain/useCases/user/add-user'
 
 const makeValidation = (): Validation => {

@@ -1,3 +1,4 @@
+import { Authentication } from '../../../domain/useCases/user/authentication'
 import { MissingParamError } from '../../helpers/errors'
 import { HttpRequest, HttpResponse } from '../../helpers/http-protocols'
 import { badRequest } from '../../helpers/http-responses'
@@ -12,15 +13,27 @@ const makeValidation = (): Validation => {
   }
   return new ValidationCompositeStub()
 }
+const makeAuthenticate = (): Authentication => {
+  class AuthenticationStub implements Authentication {
+    async auth (email: string, password: string): Promise<string> {
+      return new Promise(resolve => resolve('token'))
+    }
+  }
+  return new AuthenticationStub()
+}
 
 class LoginController implements Controller {
-  constructor (private readonly validation: Validation) {}
+  constructor (private readonly validation: Validation,
+    private readonly authentication: Authentication) {}
+
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const validationError = this.validation.validate(httpRequest.body)
       if (validationError) {
         return badRequest(validationError)
       }
+      const { email, password } = httpRequest.body
+      await this.authentication.auth(email, password)
       return null
     } catch {
 
@@ -29,9 +42,10 @@ class LoginController implements Controller {
 }
 
 const makeSut = (): any => {
+  const authenticationStub = makeAuthenticate()
   const validationStub = makeValidation()
-  const sut = new LoginController(validationStub)
-  return { sut, validationStub }
+  const sut = new LoginController(validationStub, authenticationStub)
+  return { sut, validationStub, authenticationStub }
 }
 
 describe('Login User', () => {
@@ -57,5 +71,17 @@ describe('Login User', () => {
     }
     const result = await sut.handle(httpRequest)
     expect(result).toEqual(badRequest(new MissingParamError('email')))
+  })
+  test('should calls authenticate with correct values', async () => {
+    const { sut, authenticationStub } = makeSut()
+    const authenticationSpy = jest.spyOn(authenticationStub, 'auth')
+    const httpRequest = {
+      body: {
+        email: 'any_email',
+        password: 'any_password'
+      }
+    }
+    await sut.handle(httpRequest)
+    expect(authenticationSpy).toHaveBeenCalledWith('any_email', 'any_password')
   })
 })

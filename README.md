@@ -17,6 +17,37 @@
 ## Features
    - Register User
    - Login User ...🔨👷
+#### Project tree
+```
+src
+├── app
+│   ├── config
+│   └── routes
+├── presentation
+│   ├── controller
+│   ├── registerUser
+│   ├── factories
+│   ├── helpers
+│   └── interfaces
+├── domain
+│   ├── entities
+│   ├── security
+│   └── useCases
+│       ├── db
+│       ├── user
+│       └── token
+├── implementations
+│   ├── db
+│   │   └── mongo
+│   │       ├── conn
+│   │       └── models
+│   ├── security
+│   │   ├── password
+│   │   └── token
+│   └── validators
+├── repositories
+└── validation
+```
 ### Developed with:
  - **Principles**
     - Single Responsability

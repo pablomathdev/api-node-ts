@@ -7,10 +7,11 @@
 </p>
 <h2 style="margin:0;padding:0"align="center">🔙👨‍💻 API</h2>
 
-<h2 align="center"><img width="120" src="https://cdn2.iconfinder.com/data/icons/agile-methodology-14/64/intergration-256.png"></h2>
+<h2 align="center"><img width="120" src="https://cdn2.iconfinder.com/data/icons/agile-methodology-14/64/intergration-256.png">
+</h2>
 
 
-<p align="center"> Api de registro e login de usuário utilizando typescript e node.js.</p>
+<p align="center">User registration and login api using typescript and node.js.</p>
 <hr>
 
 ## Features
@@ -30,6 +31,9 @@
  - **Tests**
    - Unit
    - Integration
+
+___
+© 2022 *Study project inspired by Rodrigo Manguinho's clean-Node-api training.*
 
 
 

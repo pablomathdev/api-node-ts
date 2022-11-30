@@ -1,7 +1,7 @@
 import { Authentication } from '../../../domain/useCases/user/authentication'
 import { MissingParamError } from '../../helpers/errors'
 import { HttpRequest, HttpResponse } from '../../helpers/http-protocols'
-import { badRequest } from '../../helpers/http-responses'
+import { badRequest, ok } from '../../helpers/http-responses'
 import { Controller } from '../../interfaces/controller'
 import { Validation } from '../../interfaces/validation'
 
@@ -33,7 +33,10 @@ class LoginController implements Controller {
         return badRequest(validationError)
       }
       const { email, password } = httpRequest.body
-      await this.authentication.auth(email, password)
+      const token = await this.authentication.auth(email, password)
+      if (token) {
+        return ok(token)
+      }
       return null
     } catch {
 
@@ -83,5 +86,17 @@ describe('Login User', () => {
     }
     await sut.handle(httpRequest)
     expect(authenticationSpy).toHaveBeenCalledWith('any_email', 'any_password')
+  })
+  test('should returns token if authentication success', async () => {
+    const { sut } = makeSut()
+
+    const httpRequest = {
+      body: {
+        email: 'any_email',
+        password: 'any_password'
+      }
+    }
+    const result = await sut.handle(httpRequest)
+    expect(result).toEqual(ok('token'))
   })
 })

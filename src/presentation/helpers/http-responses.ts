@@ -34,3 +34,9 @@ export const created = (token: string): HttpResponse => {
     body: token
   }
 }
+export const ok = (token: string): HttpResponse => {
+  return {
+    statusCode: 200,
+    body: token
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "api-node-ts",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "User registration and login api using typescript and node.js.",
   "main": "index.js",
   "scripts": {

@@ -1,9 +1,9 @@
 import request from 'supertest'
-import app from '../config/app'
+import app from '../../config/app'
 import { hash } from 'bcrypt'
-import { deleteDocs, mongoConnect, mongoDisconnect } from '../../implementations/db/mongo/conn/mongo-connect'
-import { UserModel } from '../../implementations/db/mongo/models/user'
-import env from '../config/env'
+import { deleteDocs, mongoConnect, mongoDisconnect } from '../../../implementations/db/mongo/conn/mongo-connect'
+import { UserModel } from '../../../implementations/db/mongo/models/user'
+import env from '../../config/env'
 
 describe('Register route', () => {
   beforeAll(async () => {

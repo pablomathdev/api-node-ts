@@ -10,6 +10,8 @@ import { EmailValidation } from '../../validation/email-validation'
 import { RequiredFieldsValidation } from '../../validation/required-fields-validation'
 import { ValidationComposite } from '../../validation/validation-composite'
 import { AddUserRepository } from '../../repositories/add-user'
+import { LoginController } from '../controllers/loginUser/login-controller'
+import { loginValidationFactory } from './login-validation-factory'
 
 const mongoFactory = (): MongoRepository => {
   return new MongoRepository()
@@ -33,4 +35,8 @@ export const registerControllerFactory = (): RegisterController => {
   const bcrypt = new BcryptImplementation()
   const addUser = new AddUserRepository(findUserByEmail, bcrypt, mongoFactory())
   return new RegisterController(registerValidation(), addUser, authenticateFactory())
+}
+
+export const loginControllerFactory = (): LoginController => {
+  return new LoginController(loginValidationFactory(), authenticateFactory())
 }

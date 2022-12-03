@@ -113,4 +113,17 @@ describe('Login User', () => {
     const result = await sut.handle(httpRequest)
     expect(result).toEqual(Unauthorized())
   })
+  test('should throw if authentication throws', async () => {
+    const { sut, authenticationStub } = makeSut()
+    jest.spyOn(authenticationStub, 'auth')
+      .mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    const httpRequest = {
+      body: {
+        email: 'any_email',
+        password: 'any_password'
+      }
+    }
+    const result = await sut.handle(httpRequest)
+    expect(result).toEqual(serverError(new Error()))
+  })
 })

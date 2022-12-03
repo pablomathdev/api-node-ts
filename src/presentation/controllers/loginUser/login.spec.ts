@@ -1,9 +1,7 @@
-
+import { LoginController } from './login-controller'
 import { Authentication } from '../../../domain/useCases/user/authentication'
 import { MissingParamError } from '../../helpers/errors'
-import { HttpRequest, HttpResponse } from '../../helpers/http-protocols'
 import { badRequest, ok, serverError, Unauthorized } from '../../helpers/http-responses'
-import { Controller } from '../../interfaces/controller'
 import { Validation } from '../../interfaces/validation'
 
 const makeValidation = (): Validation => {
@@ -21,28 +19,6 @@ const makeAuthenticate = (): Authentication => {
     }
   }
   return new AuthenticationStub()
-}
-
-class LoginController implements Controller {
-  constructor (private readonly validation: Validation,
-    private readonly authentication: Authentication) {}
-
-  async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    try {
-      const validationError = this.validation.validate(httpRequest.body)
-      if (validationError) {
-        return badRequest(validationError)
-      }
-      const { email, password } = httpRequest.body
-      const token = await this.authentication.auth(email, password)
-      if (token) {
-        return ok(token)
-      }
-      return Unauthorized()
-    } catch (error) {
-      return serverError(error)
-    }
-  }
 }
 
 const makeSut = (): any => {

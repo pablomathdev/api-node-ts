@@ -1,5 +1,6 @@
 ### Login User 
 <img width="50" src="https://cdn4.iconfinder.com/data/icons/user-experience-1/60/ux-outline-029-secure-log-in-256.png">
+
 ---
 
  - [x] - Receives a POST request on the /login endpoint;

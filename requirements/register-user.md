@@ -1,5 +1,6 @@
 ### Register User 
 <img width="50" src="https://cdn4.iconfinder.com/data/icons/zeir-miscellaneous-007/64/form_write_document_register-512.png">
+
 ---
 - [x] - Receives a POST request on the /register endpoint;
  - [x] - Register User with fields name,email,password;

@@ -30,7 +30,7 @@ describe('Login route', () => {
       })
       .expect(200)
   })
-  test('Should return 401 if user login fails', async () => {
+  test('Should return 401 if user login fails(incorrect password)', async () => {
     const hashPassword = await hash('123', 12)
     await UserModel.create({
       name: 'Pablo',
@@ -43,6 +43,22 @@ describe('Login route', () => {
 
         email: 'pablomatheus144@gmail.com',
         password: '124'
+      })
+      .expect(401)
+  })
+  test('Should return 401 if user login fails(incorrect email)', async () => {
+    const hashPassword = await hash('123', 12)
+    await UserModel.create({
+      name: 'Pablo',
+      email: 'validemail123@gmail.com',
+      password: hashPassword
+    })
+    await request(app)
+      .post('/login')
+      .send({
+
+        email: 'invalidaemail123@gmail.com',
+        password: '123'
       })
       .expect(401)
   })

@@ -7,7 +7,8 @@ module.exports = {
   coverageReporters: ['json-summary', 'lcov', 'text'],
   collectCoverageFrom: [
     '<rootDir>/src/**/*.ts',
-    '!<rootDir>/src/app/**',
+    '<rootDir>/src/app/routes/tests/**',
+    '!<rootDir>/src/app/config/**',
     '!<rootDir>/src/domain/**',
     '!<rootDir>/src/presentation/helpers/http-protocols.ts',
     '!<rootDir>/src/presentation/interfaces/**'

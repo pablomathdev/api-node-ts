@@ -3,7 +3,7 @@ import { HttpRequest } from '../../presentation/helpers/http-protocols'
 import { Request, Response } from 'express'
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
-export class RequestAndResponse {
+export class RequestAndResponseAdapter {
   static execute (controller: Controller) {
     return async (req: Request, res: Response) => {
       const httpRequest: HttpRequest = {

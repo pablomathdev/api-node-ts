@@ -62,4 +62,3 @@ src
    - Unit	   
    - Integration	  
 ___
-© 2022 *Study project inspired by Rodrigo Manguinho's clean-Node-api training.*
